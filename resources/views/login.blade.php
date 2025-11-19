@@ -7,7 +7,7 @@
 		<meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, invoice, html5, responsive, Projects">
         <meta name="author" content="Dreamguys - Bootstrap Admin Template">
         <meta name="robots" content="noindex, nofollow">
-        <title>Se Connecter - Application Service GRH-DMSPS Fès</title>
+        <title>Connecter - Application Service GRH-DMSPS Fès</title>
 
 		<script src="/html/assets/js/theme-script.js" type="3ae823559d2536916a3a4ca0-text/javascript"></script>
 
@@ -47,7 +47,7 @@
                                 @csrf
                                 <div class="login-userset">
                                     <div class="login-userheading">
-                                        <h3>Se Connecter</h3>
+                                        <h3>Connecter</h3>
                                         <h4>Veuillez saisir votre adresse email et votre mot de passe.</h4>
                                     </div>
                                     <div class="form-login">
@@ -79,7 +79,7 @@
                                         </div>
                                     </div>
                                     <div class="form-login">
-                                        <button class="btn btn-login" type="submit">Se Connecter</button>
+                                        <button class="btn btn-login" type="submit">Connecter</button>
                                     </div>
 
                                     <div class="form-login mt-3">
