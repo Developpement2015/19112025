@@ -99,6 +99,13 @@ class PermissionSeeder extends Seeder
             'greves.edit',
             'greves.delete',
 
+            // Gestion des demandes fonctionnaires
+            'demandes.view',
+            'demandes.create',
+            'demandes.approve',
+            'demandes.decide',
+            'demandes.manage',
+
             // Impression en lot
             'batch-print.view',
             'batch-print.attestations',
@@ -120,6 +127,11 @@ class PermissionSeeder extends Seeder
         $adminRole = Role::firstOrCreate(['name' => 'Super Admin']);
         $hrRole = Role::firstOrCreate(['name' => 'RH Manager']);
         $userRole = Role::firstOrCreate(['name' => 'Utilisateur']);
+
+        // Create responsable roles for demandes workflow
+        $responsable1Role = Role::firstOrCreate(['name' => 'responsable1']);
+        $responsable2Role = Role::firstOrCreate(['name' => 'responsable2']);
+        $responsable3Role = Role::firstOrCreate(['name' => 'responsable3']);
 
         // Assign all permissions to Super Admin
         $adminRole->givePermissionTo(Permission::all());
@@ -184,6 +196,31 @@ class PermissionSeeder extends Seeder
             'greves.view',
         ];
         $userRole->givePermissionTo($userPermissions);
+
+        // Assign permissions to responsable1 (Niveau 1 - can view and approve level 0→1)
+        $responsable1Permissions = [
+            'administration.tableau-de-bord',
+            'demandes.view',
+            'demandes.approve',
+        ];
+        $responsable1Role->givePermissionTo($responsable1Permissions);
+
+        // Assign permissions to responsable2 (Niveau 2 - can view and approve level 1→2)
+        $responsable2Permissions = [
+            'administration.tableau-de-bord',
+            'demandes.view',
+            'demandes.approve',
+        ];
+        $responsable2Role->givePermissionTo($responsable2Permissions);
+
+        // Assign permissions to responsable3 (Niveau 3 - can view, approve level 2→3, and create decisions)
+        $responsable3Permissions = [
+            'administration.tableau-de-bord',
+            'demandes.view',
+            'demandes.approve',
+            'demandes.decide',
+        ];
+        $responsable3Role->givePermissionTo($responsable3Permissions);
 
         $this->command->info('Permissions and roles created successfully!');
     }

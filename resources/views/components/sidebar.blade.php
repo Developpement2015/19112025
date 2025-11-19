@@ -27,6 +27,9 @@
 							<ul>
 								<li><a href="/retraites" ><img src="https://cdn-icons-png.flaticon.com/256/3135/3135715.png?ga=GA1.1.612487478.1684332954&semt=ais_hybrid" width='19' height="19" alt="Gestion des retraites"><span>&nbsp; Gestion des retraites</span></a></li>
 							</ul>
+							<ul>
+								<li><a href="/demandes" ><img src="https://cdn-icons-png.flaticon.com/256/3135/3135810.png" width='19' height="19" alt="Gestion des demandes"><span>&nbsp; Gestion des demandes</span></a></li>
+							</ul>
 						</li>
 
 						<li class="submenu-open">

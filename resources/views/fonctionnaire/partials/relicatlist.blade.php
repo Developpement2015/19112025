@@ -3,6 +3,111 @@
         <h2>Relicats</h2>
         <div>
             <div class="d-flex align-items-center">
+                <button type="button" class="btn btn-info me-2" data-bs-toggle="modal" data-bs-target="#listeCongesPrisesAdditifsModal">
+                    <i class="fas fa-list-alt me-1"></i> Liste des congés pris & additifs par année
+                </button>
+<!-- Modal: Liste des congés pris et additifs par année -->
+<div class="modal fade" id="listeCongesPrisesAdditifsModal" tabindex="-1" aria-labelledby="listeCongesPrisesAdditifsLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="listeCongesPrisesAdditifsLabel">Liste des congés pris et additifs par année</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Année</th>
+                                <th>Type</th>
+                                <th>Nombre de jours</th>
+                                <th>Date début</th>
+                                <th>Date fin</th>
+                                <th>Statut</th>
+                                <th>Source</th>
+                                <th>Infos additif</th>
+                                <th>Fichier</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php
+                                $allConges = collect($congeDocuments ?? [])->sortBy(function($c) {
+                                    return $c['date_debut'] ? \Carbon\Carbon::parse($c['date_debut'])->year : 0;
+                                });
+                                $groupedByYear = $allConges->groupBy(function($c) {
+                                    return $c['date_debut'] ? \Carbon\Carbon::parse($c['date_debut'])->year : 'Non spécifiée';
+                                });
+                            @endphp
+                            @foreach($groupedByYear as $year => $conges)
+                                @foreach($conges as $conge)
+                                    <tr>
+                                        <td>{{ $year }}</td>
+                                        <td>{{ $conge['type_conge'] }}</td>
+                                        <td>{{ $conge['nombre_jours'] }}</td>
+                                        <td>
+                                            @if($conge['date_debut'])
+                                                {{ \Carbon\Carbon::parse($conge['date_debut'])->format('d/m/Y') }}
+                                            @else
+                                                <span class="text-muted">Non spécifiée</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($conge['date_fin'])
+                                                {{ \Carbon\Carbon::parse($conge['date_fin'])->format('d/m/Y') }}
+                                            @else
+                                                <span class="text-muted">-</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-{{ $conge['statut'] == 'Disponible' ? 'info' : ($conge['statut'] == 'Approuvé' ? 'success' : 'warning') }}">
+                                                {{ $conge['statut'] }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-{{ $conge['source'] == 'relicat' ? 'primary' : 'secondary' }}">
+                                                {{ $conge['source'] }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            @if(isset($conge['relicat']->is_additif) && $conge['relicat']->is_additif)
+                                                <span class="badge bg-success">Additif: {{ $conge['relicat']->nbr_jours_disponibles }} jours, année {{ $conge['relicat']->annee }}</span>
+                                            @else
+                                                <span class="text-muted">-</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if(isset($conge['relicat']->document) && $conge['relicat']->document)
+                                                <a href="{{ asset('storage/' . $conge['relicat']->document) }}" target="_blank" class="btn btn-sm btn-outline-primary">Fichier</a>
+                                            @else
+                                                <span class="text-muted">-</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($conge['source'] == 'relicat')
+                                                <form method="POST" action="{{ route('reliquat.delete', $conge['relicat']->id) }}" style="display:inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer ce reliquat ?')">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
                 <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#listCongesModal">
                     <i class="fas fa-list me-1"></i> Liste des congés
                     @if(isset($congeDocuments) && count($congeDocuments) > 0)
@@ -14,9 +119,9 @@
                 <button type="button" class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#exportCongesModal">
                     <i class="fas fa-file-excel me-1"></i> Exporter Excel
                 </button>
-                {{-- <a href="javascript:void(0)" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addrelicat">
-                    <i data-feather="plus-circle" class="me-2"></i>Ajouter
-                </a> --}}
+                <a href="javascript:void(0)" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addrelicat">
+                    <i data-feather="plus-circle" class="me-2"></i>Ajouter additif congé
+                </a>
             </div>
         </div>
     </div>
@@ -24,6 +129,8 @@
 
 <!-- Modal for List Congés -->
 <div class="modal fade" id="listCongesModal" tabindex="-1" aria-labelledby="listCongesModalLabel" aria-hidden="true">
+
+
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
@@ -36,11 +143,6 @@
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="liste-tab" data-bs-toggle="tab" data-bs-target="#liste" type="button" role="tab">
                             <i class="fas fa-list me-1"></i> Liste des congés
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="statistiques-tab" data-bs-toggle="tab" data-bs-target="#statistiques" type="button" role="tab">
-                            <i class="fas fa-chart-bar me-1"></i> Statistiques
                         </button>
                     </li>
                 </ul>
@@ -60,6 +162,16 @@
                                         <div class="card-body">
                                             <div class="row">
                                                 @foreach($congeTotals as $typeName => $typeData)
+                                                    @php
+                                                        // Normalize sexe: accept 'M'/'F' or words
+                                                        $sexeChar = isset($fonctionnaire->sexe) ? strtoupper(substr($fonctionnaire->sexe,0,1)) : null;
+                                                        $isFemale = $sexeChar === 'F' || in_array(strtolower($fonctionnaire->sexe ?? ''), ['feminine','femme','female','f']);
+                                                        $isMale = $sexeChar === 'M' || in_array(strtolower($fonctionnaire->sexe ?? ''), ['masculin','homme','male','m']);
+                                                    @endphp
+                                                    {{-- Hide gender-specific leave types: paternity for females, maternity for males --}}
+                                                    @if(($isFemale && stripos($typeName, 'patern') !== false) || ($isMale && stripos($typeName, 'matern') !== false))
+                                                        @continue
+                                                    @endif
                                                     <div class="col-md-4 mb-3">
                                                         <div class="type-summary-card">
                                                             <h6 class="type-name">{{ $typeName }}</h6>
@@ -143,8 +255,8 @@
                                     </td>
                                     <td>
                                         @if($conge['source'] == 'relicat')
-                                            <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#ampliationsModal{{ $conge['id'] }}">
-                                                <i class="fas fa-file-pdf me-1"></i> PDF
+                                            <button type="button" class="btn btn-sm btn-warning" onclick="showCongeDecisionDetails({{ $conge['id'] }})">
+                                                <i class="fas fa-info-circle me-1"></i> Détail
                                             </button>
                                         @else
                                             <button type="button" class="btn btn-sm btn-success" onclick="showCongeDecisionDetails({{ $conge['id'] }})">
@@ -163,229 +275,48 @@
                                     </td>
                                 </tr>
                             @endforelse
+
+                            {{-- Modals for reliquat details --}}
+                            @foreach($congeDocuments ?? [] as $conge)
+                                @if($conge['source'] == 'relicat')
+                                    <div class="modal fade" id="relicatDetailsModal{{ $conge['id'] }}" tabindex="-1" aria-labelledby="relicatDetailsLabel{{ $conge['id'] }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="relicatDetailsLabel{{ $conge['id'] }}">Détail du reliquat</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <ul class="list-group">
+                                                        <li class="list-group-item"><strong>Type de congé :</strong> {{ $conge['type_conge'] }}</li>
+                                                        <li class="list-group-item"><strong>Nombre de jours :</strong> {{ $conge['nombre_jours'] }}</li>
+                                                        <li class="list-group-item"><strong>Date début :</strong> {{ $conge['date_debut'] ? \Carbon\Carbon::parse($conge['date_debut'])->format('d/m/Y') : 'Non spécifiée' }}</li>
+                                                        <li class="list-group-item"><strong>Date fin :</strong> {{ $conge['date_fin'] ? \Carbon\Carbon::parse($conge['date_fin'])->format('d/m/Y') : '-' }}</li>
+                                                        <li class="list-group-item"><strong>Statut :</strong> {{ $conge['statut'] }}</li>
+                                                        {{-- Show relicat-specific fields: date_depot, solde, année --}}
+                                                        @if(isset($conge['relicat']))
+                                                            <li class="list-group-item"><strong>Date de dépôt :</strong> {{ isset($conge['relicat']->date_depot) && $conge['relicat']->date_depot ? \Carbon\Carbon::parse($conge['relicat']->date_depot)->format('d/m/Y') : 'Non spécifiée' }}</li>
+                                                            <li class="list-group-item"><strong>Nombre solde crédit (jours) :</strong> {{ $conge['relicat']->nbr_jours_disponibles ?? '-' }}</li>
+                                                            <li class="list-group-item"><strong>Année :</strong> {{ $conge['relicat']->annee ?? '-' }}</li>
+                                                            <li class="list-group-item"><strong>Additif :</strong> {{ isset($conge['relicat']->is_additif) && $conge['relicat']->is_additif ? 'Oui' : 'Non' }}</li>
+                                                        @endif
+                                                        @if(isset($conge['relicat']->document) && $conge['relicat']->document)
+                                                            <li class="list-group-item"><strong>Document :</strong> <a href="{{ asset('storage/' . $conge['relicat']->document) }}" target="_blank">Télécharger</a></li>
+                                                        @endif
+                                                        {{-- legacy additif info was handled above --}}
+                                                    </ul>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endforeach
                         </tbody>
                     </table>
                         </div>
-                        <!-- Inline: Congés pris (sous le tableau Reliquats) -->
-                        @php
-                            $taken = collect($congeDocuments ?? [])->filter(function($c){
-                                return isset($c['source']) && $c['source'] === 'decision' && isset($c['statut']) && in_array(mb_strtolower($c['statut']), ['approuvé','approuve','pris','approuvé']);
-                            })->values();
-                        @endphp
-
-                        <div class="card mt-3">
-                            <div class="card-header">
-                                <h6 class="mb-0"><i class="fas fa-plane-departure me-2"></i> Congés pris</h6>
-                            </div>
-                            <div class="card-body p-2">
-                                @if($taken->isEmpty())
-                                    <p class="text-muted mb-0">Aucun congé pris enregistré.</p>
-                                @else
-                                    <div class="table-responsive">
-                                        <table class="table table-sm mb-0">
-                                            <thead>
-                                                <tr>
-                                                    <th>Type</th>
-                                                    <th>Jours</th>
-                                                    <th>Date début</th>
-                                                    <th>Date fin</th>
-                                                    <th>Statut</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach($taken as $t)
-                                                    <tr>
-                                                        <td>{{ $t['type_conge'] ?? '-' }}</td>
-                                                        <td>{{ $t['nombre_jours'] ?? '-' }}</td>
-                                                        <td>{{ $t['date_debut'] ? \Carbon\Carbon::parse($t['date_debut'])->format('d/m/Y') : '-' }}</td>
-                                                        <td>{{ $t['date_fin'] ? \Carbon\Carbon::parse($t['date_fin'])->format('d/m/Y') : '-' }}</td>
-                                                        <td><span class="badge bg-success">{{ $t['statut'] }}</span></td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Statistiques tab -->
-                    <div class="tab-pane fade" id="statistiques" role="tabpanel">
-                        @if(isset($congeStatistics))
-                            <!-- Résumé général -->
-                            <div class="row mb-4">
-                                <div class="col-md-12">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h6 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Résumé général</h6>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="row text-center">
-                                                <div class="col-md-4">
-                                                    <div class="stat-box">
-                                                        <h4 class="text-primary">{{ $congeStatistics['summary']['total_reliquats'] ?? 0 }}</h4>
-                                                        <p class="text-muted mb-0">Solde annuel total</p>
-                                                        <small class="text-muted">Allocation standard</small>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="stat-box">
-                                                        <h4 class="text-danger">{{ $congeStatistics['summary']['total_pris'] ?? 0 }}</h4>
-                                                        <p class="text-muted mb-0">Jours pris (total)</p>
-                                                        <small class="text-muted">Toutes années confondues</small>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="stat-box">
-                                                        <h4 class="text-{{ ($congeStatistics['summary']['total_restant'] ?? 0) >= 0 ? 'success' : 'warning' }}">
-                                                            {{ $congeStatistics['summary']['total_restant'] ?? 0 }}
-                                                        </h4>
-                                                        <p class="text-muted mb-0">Solde global</p>
-                                                        <small class="text-muted">
-                                                            @if(($congeStatistics['summary']['total_restant'] ?? 0) < 0)
-                                                                Dépassement
-                                                            @else
-                                                                Disponible
-                                                            @endif
-                                                        </small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Statistiques par année -->
-                            @if(!empty($congeStatistics['by_year']))
-                                <div class="row mb-4">
-                                    <div class="col-md-12">
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <h6 class="mb-0"><i class="fas fa-calendar me-2"></i>Reliquats par année</h6>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="table-responsive">
-                                                    <table class="table table-sm">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Année</th>
-                                                                <th>Allocation standard</th>
-                                                                <th>Jours pris</th>
-                                                                <th>Solde restant</th>
-                                                                <th>Détail par type</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            @foreach($congeStatistics['by_year'] as $yearData)
-                                                                <tr>
-                                                                    <td><strong>{{ $yearData['year'] }}</strong></td>
-                                                                    <td>
-                                                                        @php
-                                                                            $totalStandard = 0;
-                                                                            foreach($yearData['by_type'] as $typeData) {
-                                                                                $totalStandard += $typeData['standard'];
-                                                                            }
-                                                                        @endphp
-                                                                        <span class="badge bg-info">{{ $totalStandard }}</span>
-                                                                    </td>
-                                                                    <td><span class="badge bg-danger">{{ $yearData['jours_pris'] }}</span></td>
-                                                                    <td>
-                                                                        @php $solde = $totalStandard - $yearData['jours_pris']; @endphp
-                                                                        <span class="badge bg-{{ $solde >= 0 ? 'success' : 'warning' }}">{{ $solde }}</span>
-                                                                    </td>
-                                                                    <td>
-                                                                        @foreach($yearData['by_type'] as $typeName => $typeData)
-                                                                            @if($typeData['pris'] > 0 || $typeData['standard'] > 0)
-                                                                                <small class="d-block">
-                                                                                    <strong>{{ $typeName }}:</strong>
-                                                                                    {{ $typeData['standard'] }} - {{ $typeData['pris'] }} =
-                                                                                    <span class="badge badge-sm bg-{{ $typeData['solde'] >= 0 ? 'success' : 'warning' }}">
-                                                                                        {{ $typeData['solde'] }}
-                                                                                    </span>
-                                                                                </small>
-                                                                            @endif
-                                                                        @endforeach
-                                                                    </td>
-                                                                </tr>
-                                                            @endforeach
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-
-                            <!-- Statistiques par type de congé -->
-                            @if(!empty($congeStatistics['by_type']))
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <h6 class="mb-0"><i class="fas fa-tags me-2"></i>Statistiques par type de congé</h6>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="table-responsive">
-                                                    <table class="table table-sm">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Type de congé</th>
-                                                                <th>Solde annuel</th>
-                                                                <th>Jours pris (total)</th>
-                                                                <th>Jours restants</th>
-                                                                <th>Taux d'utilisation</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            @foreach($congeStatistics['by_type'] as $typeName => $typeData)
-                                                                @if($typeData['standard_allocation'] > 0)
-                                                                <tr>
-                                                                    <td><strong>{{ $typeName }}</strong></td>
-                                                                    <td>
-                                                                        <span class="badge bg-info">{{ $typeData['standard_allocation'] }}</span>
-                                                                        <small class="text-muted d-block">jours/an</small>
-                                                                    </td>
-                                                                    <td><span class="badge bg-danger">{{ $typeData['pris_total'] }}</span></td>
-                                                                    <td>
-                                                                        <span class="badge bg-{{ $typeData['restant'] >= 0 ? 'success' : 'warning' }}">
-                                                                            {{ $typeData['restant'] }}
-                                                                        </span>
-                                                                    </td>
-                                                                    <td>
-                                                                        @php
-                                                                            $taux = $typeData['standard_allocation'] > 0 ?
-                                                                                round(($typeData['pris_total'] / $typeData['standard_allocation']) * 100, 1) : 0;
-                                                                        @endphp
-                                                                        <div class="progress" style="height: 20px;">
-                                                                            <div class="progress-bar bg-{{ $taux > 80 ? 'danger' : ($taux > 50 ? 'warning' : 'success') }}"
-                                                                                 style="width: {{ min($taux, 100) }}%">
-                                                                                {{ $taux }}%
-                                                                            </div>
-                                                                        </div>
-                                                                        <small class="text-muted">
-                                                                            {{ $typeData['pris_total'] }}/{{ $typeData['standard_allocation'] }} jours
-                                                                        </small>
-                                                                    </td>
-                                                                </tr>
-                                                                @endif
-                                                            @endforeach
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-                        @else
-                            <div class="text-center text-muted py-4">
-                                <i class="fas fa-chart-bar fa-3x mb-3"></i>
-                                <p>Aucune statistique disponible pour ce fonctionnaire.</p>
-                            </div>
-                        @endif
                     </div>
                 </div>
             </div>
@@ -537,159 +468,26 @@
 </div>
 
 
-<table class="table">
 
-
+<!-- Nouveau tableau : jours restants de congé pour chaque type de congé -->
+<h5 class="mt-4">Jours restants par type de congé</h5>
+<table class="table table-bordered">
     <thead>
         <tr>
-            <th>Type Congé</th>
-            <th>Nombre de Jours Disponibles</th>
-            <th>Date de Prise</th>
-            <th>Jours Restants</th>
-            {{-- <th>Actions</th> --}}
+            <th>Type de congé</th>
+            <th>Jours restants</th>
         </tr>
     </thead>
     <tbody>
-        @foreach($fonctionnaire->relicats as $relicat)
-        <tr>
-            <td>
-                {{ $relicat->typeConge->nom }}
-                @if(isset($relicat->is_additif) && $relicat->is_additif)
-                    <span class="badge bg-warning ms-2">Additif ({{ $relicat->annee ?? '?' }})</span>
-                @endif
-            </td>
-            <td>{{ $relicat->nbr_jours_disponibles }}</td>
-            <td>
-                @if($relicat->date_conge)
-                    {{ \Carbon\Carbon::parse($relicat->date_conge)->format('d/m/Y') }}
-                @else
-                    <span class="text-muted">Non spécifiée</span>
-                @endif
-            </td>
-            <td>
-                @php
-                    $typeCongeId = $relicat->type_conge_id;
-
-                    // Get the year from the relicat date or use the current year
-                    $relicatYear = $relicat->date_conge
-                        ? \Carbon\Carbon::parse($relicat->date_conge)->year
-                        : date('Y');
-
-                    // Get the current year for comparison
-                    $currentYear = date('Y');
-
-                    // Start from 2025 as requested
-                    $startYear = 2025;
-                    $endYear = max($currentYear, $relicatYear) + 1; // Include next year for planning
-
-                    // Get all availabilities for this fonctionnaire and type of congé
-                    $availabilities = \App\Models\CongeAvailability::where('fonctionnaire_id', $fonctionnaire->id)
-                        ->where('type_conge_id', $typeCongeId)
-                        ->where('year', '>=', $startYear)
-                        ->where('year', '<=', $endYear)
-                        ->orderBy('year')
-                        ->get();
-
-                    // If no availabilities exist yet, create them using the service
-                    if ($availabilities->isEmpty()) {
-                        $congeAvailabilityService = app(\App\Services\CongeAvailabilityService::class);
-                        $congeAvailabilityService->updateAvailability($fonctionnaire->id, $typeCongeId, $currentYear);
-
-                        // Fetch the availabilities again
-                        $availabilities = \App\Models\CongeAvailability::where('fonctionnaire_id', $fonctionnaire->id)
-                            ->where('type_conge_id', $typeCongeId)
-                            ->where('year', '>=', $startYear)
-                            ->where('year', '<=', $endYear)
-                            ->orderBy('year')
-                            ->get();
-                    }
-
-                    // Get the current year's availability
-                    $currentYearAvailability = $availabilities->firstWhere('year', $currentYear);
-
-                    // Get the total remaining days (from the last year's availability)
-                    $lastYearAvailability = $availabilities->last();
-                    $totalJoursRestants = $lastYearAvailability ? $lastYearAvailability->jours_restants : 0;
-                @endphp
-
-                <div>
-                    <!-- Current year's remaining days -->
-                    <span class="badge {{ $currentYearAvailability && $currentYearAvailability->jours_restants > 0 ? 'bg-success' : 'bg-danger' }}">
-                        {{ $currentYearAvailability ? $currentYearAvailability->jours_restants : 0 }} jours en {{ $currentYear }}
+        @foreach($congeTotals ?? [] as $typeName => $typeData)
+            <tr>
+                <td>{{ $typeName }}</td>
+                <td>
+                    <span class="badge bg-{{ $typeData['jours_restants'] >= 0 ? 'success' : 'danger' }}">
+                        {{ $typeData['jours_restants'] }}
                     </span>
-
-                    <!-- Total remaining days -->
-                    <span class="mt-1 badge bg-primary d-block">
-                        Total: {{ $totalJoursRestants }} jours
-                    </span>
-
-                    <!-- Detailed breakdown button -->
-                    <button type="button" class="mt-1 btn btn-sm btn-outline-info"
-                            data-bs-toggle="modal"
-                            data-bs-target="#detailModal{{ $relicat->id }}">
-                        <i class="fas fa-info-circle"></i> Détails
-                    </button>
-
-                    <!-- Modal with detailed breakdown -->
-                    <div class="modal fade" id="detailModal{{ $relicat->id }}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Détail des jours de congé - {{ $relicat->typeConge->nom }}</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <table class="table table-sm table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>Année</th>
-                                                <th>Jours par an</th>
-                                                <th>Report</th>
-                                                <th>Disponibles</th>
-                                                <th>Utilisés</th>
-                                                <th>Restants</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach($availabilities as $availability)
-                                                <tr class="{{ $availability->year == $currentYear ? 'table-primary' : '' }}">
-                                                    <td>{{ $availability->year }}</td>
-                                                    <td>{{ $availability->jours_total }}</td>
-                                                    <td>{{ $availability->jours_reportes }}</td>
-                                                    <td>{{ $availability->jours_disponibles }}</td>
-                                                    <td>{{ $availability->jours_utilises }}</td>
-                                                    <td>{{ $availability->jours_restants }}</td>
-                                                </tr>
-                                            @endforeach
-                                            <tr class="table-dark">
-                                                <td colspan="4"><strong>Total restant</strong></td>
-                                                <td colspan="2"><strong>{{ $totalJoursRestants }} jours</strong></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    @if(!empty($relicat->document))
-                                        <div class="mt-2">
-                                            <a href="{{ asset('storage/' . $relicat->document) }}" class="btn btn-sm btn-outline-primary" target="_blank">
-                                                <i class="fas fa-download me-1"></i> Télécharger la note
-                                            </a>
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </td>
-            {{--
-            <td>
-                <a class="p-2 mb-0 me-0 btn btn-danger" href="javascript:void(0);"
-                   onclick="confirmDelete({{ $relicat->id }}, '{{ route('reliquat.delete', $relicat->id) }}', 'êtes-vous sûr de vouloir supprimer ce reliquat?')">
-                    <i class="text-white fas fa-trash-alt me-2"></i>
-                    Supprimer
-                </a>
-            </td>
-            --}}
-        </tr>
+                </td>
+            </tr>
         @endforeach
     </tbody>
 </table>

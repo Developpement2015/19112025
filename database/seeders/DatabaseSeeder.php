@@ -40,6 +40,7 @@ class DatabaseSeeder extends Seeder
         // 5. Seed activity logs for testing
         $this->call([
             ActivityLogTestSeeder::class,
+            \Database\Seeders\RolesAndUsersSeeder::class,
         ]);
 
         $this->command->info('✅ Database seeding completed successfully!');

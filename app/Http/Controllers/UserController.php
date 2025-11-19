@@ -31,6 +31,7 @@ class UserController extends Controller
             'formations' => 'Formations Sanitaires',
             'stages' => 'Gestion des Stages',
             'conges' => 'Gestion des Congés',
+            'demandes' => 'Gestion des Demandes',
             'mutations' => 'Mutations',
             'greves' => 'Grèves',
             'documents' => 'Documents & Recherche',
@@ -50,7 +51,7 @@ class UserController extends Controller
 
     public function data(Request $request)
     {
-        $users = User::with('roles')->select(['id', 'name', 'email', 'created_at']);
+        $users = User::with('roles')->select(['id', 'name', 'email', 'created_at', 'demande_approval_level']);
 
         return DataTables::of($users)
             ->addColumn('roles', function ($user) {
@@ -66,6 +67,14 @@ class UserController extends Controller
                 }
 
                 return implode('', $rolesBadges);
+            })
+            ->addColumn('demande_level', function ($user) {
+                if ($user->demande_approval_level) {
+                    $colors = [1 => 'success', 2 => 'warning', 3 => 'info', 4 => 'danger'];
+                    $color = $colors[$user->demande_approval_level] ?? 'secondary';
+                    return '<span class="badge bg-' . $color . '">Niveau ' . $user->demande_approval_level . '</span>';
+                }
+                return '<span class="text-muted">-</span>';
             })
             ->addColumn('actions', function ($user) {
                 $currentUser = Auth::user();
@@ -124,7 +133,7 @@ class UserController extends Controller
 
                 return $actions;
             })
-            ->rawColumns(['roles', 'actions'])
+            ->rawColumns(['roles', 'demande_level', 'actions'])
             ->make(true);
     }
 
@@ -135,13 +144,15 @@ class UserController extends Controller
                 'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:users',
                 'password' => 'required|string|min:8',
-                'roles' => 'array'
+                'roles' => 'array',
+                'demande_approval_level' => 'nullable|integer|in:1,2,3,4'
             ]);
 
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
+                'demande_approval_level' => $request->demande_approval_level,
             ]);
 
             if ($request->has('roles') && !empty($request->roles)) {
@@ -152,7 +163,10 @@ class UserController extends Controller
             activity()
                 ->causedBy(Auth::user())
                 ->performedOn($user)
-                ->withProperties(['roles' => $request->roles ?? []])
+                ->withProperties([
+                    'roles' => $request->roles ?? [],
+                    'demande_approval_level' => $request->demande_approval_level
+                ])
                 ->log('Utilisateur créé');
 
             return response()->json(['success' => true, 'message' => 'Utilisateur créé avec succès']);
@@ -187,7 +201,8 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $id,
             'password' => 'nullable|string|min:8',
-            'roles' => 'array'
+            'roles' => 'array',
+            'demande_approval_level' => 'nullable|integer|in:1,2,3,4'
         ]);
 
         // Empêcher de retirer le rôle Super Admin du dernier Super Admin
@@ -206,12 +221,14 @@ class UserController extends Controller
         $oldData = [
             'name' => $user->name,
             'email' => $user->email,
-            'roles' => $user->roles->pluck('name')->toArray()
+            'roles' => $user->roles->pluck('name')->toArray(),
+            'demande_approval_level' => $user->demande_approval_level
         ];
 
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
+            'demande_approval_level' => $request->demande_approval_level,
         ]);
 
         if ($request->filled('password')) {
@@ -227,6 +244,7 @@ class UserController extends Controller
             ->withProperties([
                 'old_data' => $oldData,
                 'new_roles' => $request->roles ?? [],
+                'new_demande_approval_level' => $request->demande_approval_level,
                 'password_changed' => $request->filled('password')
             ])
             ->log('Utilisateur mis à jour');

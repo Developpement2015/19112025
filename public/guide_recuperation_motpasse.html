@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Récupération Mot de Passe - Guide Complet</title>
+    <style>
+        body {
+            font-family: Arial;
+            margin: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .step {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 5px solid #4CAF50;
+            border-radius: 5px;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+        .warning-box {
+            background: #fff3cd;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 5px solid #ffc107;
+            border-radius: 5px;
+        }
+        .info-box {
+            background: #d1ecf1;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 5px solid #0dcaf0;
+            border-radius: 5px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            width: 100%;
+            margin: 10px 0;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+        .btn-secondary {
+            background: #2196F3;
+        }
+        .btn-secondary:hover {
+            background: #0b7dda;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #e83e8c;
+        }
+        ul { line-height: 2; }
+        .screenshot {
+            background: #e9ecef;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-style: italic;
+        }
+        .important {
+            color: #dc3545;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Guide Complet - Récupération de Mot de Passe</h1>
+
+        <div class="warning-box">
+            <h3>⚠️ Important - L'email n'est PAS envoyé</h3>
+            <p>Comme votre serveur mail n'est pas configuré, le système affiche le lien directement à l'écran.</p>
+            <p class="important">Vous n'avez PAS besoin de vérifier votre email !</p>
+        </div>
+
+        <div class="step">
+            <h3>📋 Étape 1 : Accéder à la page "Mot de passe oublié"</h3>
+            <ol>
+                <li>Allez sur : <code>http://192.168.1.38:8806/demandes/mine</code></li>
+                <li>Cliquez sur le lien <strong>"Mot de passe oublié ?"</strong></li>
+            </ol>
+            <button onclick="window.location.href='http://192.168.1.38:8806/demandes/forgot-password'">
+                🔗 Ouvrir "Mot de passe oublié"
+            </button>
+        </div>
+
+        <div class="step">
+            <h3>📧 Étape 2 : Vérification d'identité (SÉCURISÉ)</h3>
+            <ol>
+                <li>Dans le formulaire, entrez votre <strong>Email</strong> : <code>test@example.com</code></li>
+                <li>Entrez votre <strong>CIN</strong> (pour vérifier votre identité) : <code>AB12345</code></li>
+                <li>Cliquez sur <strong>"Envoyer le lien"</strong></li>
+            </ol>
+            <div class="screenshot">
+                � Sécurité : Le système vérifie que l'email ET le CIN correspondent avant d'afficher le lien
+            </div>
+            <div class="warning-box">
+                <p class="important">⚠️ Protection contre la fraude :</p>
+                <ul>
+                    <li>Maximum 3 tentatives en 15 minutes</li>
+                    <li>Email ET CIN doivent correspondre</li>
+                    <li>Impossible de deviner le lien sans ces informations</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>🔗 Étape 3 : Utiliser le lien (2 options)</h3>
+            <p><strong>Option A - Clic direct (RECOMMANDÉ) :</strong></p>
+            <ul>
+                <li>Cliquez sur le bouton vert <strong>"Ouvrir le lien maintenant"</strong></li>
+                <li>Vous serez redirigé automatiquement vers la page de réinitialisation</li>
+            </ul>
+            <p><strong>Option B - Copier/Coller :</strong></p>
+            <ul>
+                <li>Cliquez sur le bouton <strong>"Copier"</strong> à droite du lien</li>
+                <li>Collez le lien dans la barre d'adresse de votre navigateur</li>
+                <li>Appuyez sur Entrée</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>🔑 Étape 4 : Créer un nouveau mot de passe</h3>
+            <ol>
+                <li>Entrez votre <strong>nouveau mot de passe</strong> (minimum 4 caractères)</li>
+                <li>Confirmez le mot de passe (entrez-le une deuxième fois)</li>
+                <li>Cliquez sur <strong>"Réinitialiser le mot de passe"</strong></li>
+            </ol>
+            <div class="screenshot">
+                ✅ Vous verrez un message de succès en vert
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>🎉 Étape 5 : Se connecter avec le nouveau mot de passe</h3>
+            <ol>
+                <li>Vous serez redirigé vers la page de connexion</li>
+                <li>Entrez votre email : <code>test@example.com</code></li>
+                <li>Entrez votre <strong>NOUVEAU</strong> mot de passe</li>
+                <li>Cliquez sur <strong>"Se connecter"</strong></li>
+            </ol>
+            <button class="btn-secondary" onclick="window.location.href='http://192.168.1.38:8806/demandes/mine'">
+                🔐 Aller à la page de connexion
+            </button>
+        </div>
+
+        <div class="info-box">
+            <h3>📝 Informations du compte de test</h3>
+            <table style="width: 100%; line-height: 2;">
+                <tr>
+                    <td width="30%"><strong>Email :</strong></td>
+                    <td><code>test@example.com</code></td>
+                </tr>
+                <tr>
+                    <td><strong>CIN :</strong></td>
+                    <td><code>AB12345</code></td>
+                </tr>
+                <tr>
+                    <td><strong>Mot de passe actuel :</strong></td>
+                    <td><code>1234</code></td>
+                </tr>
+                <tr>
+                    <td><strong>Durée du lien :</strong></td>
+                    <td>60 minutes (1 heure)</td>
+                </tr>
+                <tr>
+                    <td><strong>Limite tentatives :</strong></td>
+                    <td>3 tentatives par 15 minutes</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="warning-box">
+            <h3>⏰ Si le lien expire</h3>
+            <p>Si vous voyez l'erreur <em>"Ce lien de réinitialisation est invalide ou a expiré"</em> :</p>
+            <ol>
+                <li>Retournez à la page "Mot de passe oublié"</li>
+                <li>Entrez à nouveau votre email</li>
+                <li>Un nouveau lien sera généré (valide 60 minutes)</li>
+            </ol>
+        </div>
+
+        <div style="margin-top: 30px; padding: 20px; background: #e7f3ff; border-radius: 8px;">
+            <h3>🎯 Test Rapide Complet</h3>
+            <p>Cliquez ci-dessous pour tester toute la procédure :</p>
+            <button onclick="window.location.href='http://192.168.1.38:8806/demandes/forgot-password'">
+                🚀 Commencer le test de récupération
+            </button>
+        </div>
+    </div>
+</body>
+</html>

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Fonction;
 use App\Models\Position;
 use App\Models\Region;
-use App\Models\Service;
 use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -28,7 +27,7 @@ class FonctionController  extends Controller
         ]);
 
         try {
-            Service::create([
+            Fonction::create([
                 'nom' => $request->input('nom'),
                 'nom_arabe' => $request->input('nom_arabe'),
             ]);

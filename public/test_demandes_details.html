@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Affichage Détaillé Demandes</title>
+    <style>
+        body {
+            font-family: Arial;
+            margin: 40px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; }
+        .info-box {
+            background: #e3f2fd;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #2196F3;
+            border-radius: 4px;
+        }
+        .test-credentials {
+            background: #fff3cd;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+            border-radius: 4px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .btn-secondary {
+            background: #2196F3;
+        }
+        .btn-secondary:hover {
+            background: #0b7dda;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        ul { line-height: 1.8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Test Affichage Détaillé des Demandes</h1>
+
+        <div class="info-box">
+            <h3>✅ Modifications apportées</h3>
+            <ul>
+                <li>Affichage en format <strong>carte</strong> (card) au lieu de tableau</li>
+                <li>Toutes les <strong>informations personnelles</strong> (PPR, Nom, Prénom, CIN, Email, Formation)</li>
+                <li>Détails de la demande avec <strong>barre de progression</strong> des approbations</li>
+                <li>Informations spécifiques selon le type :
+                    <ul>
+                        <li>Pour congés : durée, date début, type de congé</li>
+                        <li>Pour autres : précisions détaillées</li>
+                    </ul>
+                </li>
+                <li><strong>Décision finale</strong> si la demande est approuvée</li>
+                <li>Badges colorés pour le statut</li>
+            </ul>
+        </div>
+
+        <div class="test-credentials">
+            <h3>🔑 Compte de test</h3>
+            <p><strong>Email:</strong> <code>test@example.com</code></p>
+            <p><strong>Mot de passe:</strong> <code>1234</code></p>
+            <p><strong>Nombre de demandes:</strong> 1 demande (ID: 3)</p>
+        </div>
+
+        <h3>🧪 Instructions de test</h3>
+        <ol>
+            <li>Cliquez sur le bouton ci-dessous pour accéder à la page de consultation</li>
+            <li>Entrez l'email : <code>test@example.com</code></li>
+            <li>Entrez le mot de passe : <code>1234</code></li>
+            <li>Cliquez sur "Se connecter"</li>
+            <li>Vous verrez toutes les informations détaillées de vos demandes</li>
+        </ol>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button onclick="window.location.href='http://192.168.1.38:8806/demandes/mine'">
+                📋 Consulter mes demandes
+            </button>
+            <button class="btn-secondary" onclick="window.location.href='http://192.168.1.38:8806/demandes/create'">
+                ➕ Nouvelle demande
+            </button>
+        </div>
+
+        <div class="info-box" style="margin-top: 30px;">
+            <h3>📊 Informations affichées pour chaque demande</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <h4>Informations personnelles:</h4>
+                    <ul>
+                        <li>PPR</li>
+                        <li>Nom complet</li>
+                        <li>CIN</li>
+                        <li>Email</li>
+                        <li>Formation sanitaire</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Détails de la demande:</h4>
+                    <ul>
+                        <li>Type de demande</li>
+                        <li>Date de soumission</li>
+                        <li>Statut (Approuvé/En attente/Rejeté)</li>
+                        <li>Niveau d'approbation (X/3)</li>
+                        <li>Barre de progression</li>
+                        <li>Détails spécifiques</li>
+                        <li>Décision finale (si approuvé)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -695,11 +695,11 @@ class FonctionnaireController extends Controller
     // FILTRE AVEC CHECKBOXES ET ANNÉES
     public function dataCheckbox(Request $request)
     {
-        \Log::info('🔥 NOUVEAU FILTRE CHECKBOX - REQUEST DATA:', $request->all());
+    Log::info('🔥 NOUVEAU FILTRE CHECKBOX - REQUEST DATA:', $request->all());
 
         // Count total before filtering
         $totalBefore = Fonctionnaire::count();
-        \Log::info('📊 Total fonctionnaires avant filtrage:', ['count' => $totalBefore]);
+    Log::info('📊 Total fonctionnaires avant filtrage:', ['count' => $totalBefore]);
 
         $query = Fonctionnaire::with([
             'nomFormationSanitaire:id,nom,nom_arabe',
@@ -726,17 +726,17 @@ class FonctionnaireController extends Controller
             $searchResults = $searchQuery->pluck('id')->toArray();
             $filterResults[] = $searchResults;
             $hasAnyFilter = true;
-            \Log::info('🔍 Recherche appliquée:', ['term' => $searchTerm, 'count' => count($searchResults)]);
+            Log::info('🔍 Recherche appliquée:', ['term' => $searchTerm, 'count' => count($searchResults)]);
         }
 
         // Filtre Services (checkboxes) - Using latest service from history
         if ($request->has('services') && !empty($request->services)) {
             $serviceIds = explode(',', $request->services);
-            \Log::info('🏢 Filtrage par services:', $serviceIds);
+            Log::info('🏢 Filtrage par services:', $serviceIds);
 
             // Get fonctionnaire IDs that match the service filter
             $matchingFonctionnaireIds = $this->getFonctionnairesWithLatestService($serviceIds);
-            \Log::info('🏢 Fonctionnaires trouvés avec services:', ['count' => count($matchingFonctionnaireIds), 'ids' => array_slice($matchingFonctionnaireIds, 0, 10)]);
+            Log::info('🏢 Fonctionnaires trouvés avec services:', ['count' => count($matchingFonctionnaireIds), 'ids' => array_slice($matchingFonctionnaireIds, 0, 10)]);
 
             $filterResults[] = $matchingFonctionnaireIds;
             $hasAnyFilter = true;
@@ -745,11 +745,11 @@ class FonctionnaireController extends Controller
         // Filtre Positions (checkboxes) - Using latest position from history
         if ($request->has('positions') && !empty($request->positions)) {
             $positionIds = explode(',', $request->positions);
-            \Log::info('📍 Filtrage par positions:', $positionIds);
+            Log::info('📍 Filtrage par positions:', $positionIds);
 
             // Get fonctionnaire IDs that match the position filter
             $matchingFonctionnaireIds = $this->getFonctionnairesWithLatestPosition($positionIds);
-            \Log::info('📍 Fonctionnaires trouvés avec positions:', ['count' => count($matchingFonctionnaireIds), 'ids' => array_slice($matchingFonctionnaireIds, 0, 10)]);
+            Log::info('📍 Fonctionnaires trouvés avec positions:', ['count' => count($matchingFonctionnaireIds), 'ids' => array_slice($matchingFonctionnaireIds, 0, 10)]);
 
             $filterResults[] = $matchingFonctionnaireIds;
             $hasAnyFilter = true;
@@ -758,11 +758,11 @@ class FonctionnaireController extends Controller
         // Filtre Spécialités (checkboxes) - Using latest specialite from history
         if ($request->has('specialites') && !empty($request->specialites)) {
             $specialiteIds = explode(',', $request->specialites);
-            \Log::info('🎯 Filtrage par spécialités:', $specialiteIds);
+            Log::info('🎯 Filtrage par spécialités:', $specialiteIds);
 
             // Get fonctionnaire IDs that match the specialite filter
             $matchingFonctionnaireIds = $this->getFonctionnairesWithLatestSpecialite($specialiteIds);
-            \Log::info('🎯 Fonctionnaires trouvés avec spécialités:', ['count' => count($matchingFonctionnaireIds), 'ids' => array_slice($matchingFonctionnaireIds, 0, 10)]);
+            Log::info('🎯 Fonctionnaires trouvés avec spécialités:', ['count' => count($matchingFonctionnaireIds), 'ids' => array_slice($matchingFonctionnaireIds, 0, 10)]);
 
             $filterResults[] = $matchingFonctionnaireIds;
             $hasAnyFilter = true;
@@ -771,11 +771,11 @@ class FonctionnaireController extends Controller
         // Filtre par dates de prise de service et fin de service
         if ($request->has('date_debut_service') && !empty($request->date_debut_service)) {
             $dateDebut = $request->date_debut_service;
-            \Log::info('📅 Filtrage par date début service:', $dateDebut);
+            Log::info('📅 Filtrage par date début service:', $dateDebut);
 
             // Get fonctionnaire IDs that have service start date >= dateDebut
             $matchingFonctionnaireIds = $this->getFonctionnairesWithServiceDateRange($dateDebut, null);
-            \Log::info('📅 Fonctionnaires trouvés avec date début:', ['count' => count($matchingFonctionnaireIds)]);
+            Log::info('📅 Fonctionnaires trouvés avec date début:', ['count' => count($matchingFonctionnaireIds)]);
 
             $filterResults[] = $matchingFonctionnaireIds;
             $hasAnyFilter = true;
@@ -783,11 +783,11 @@ class FonctionnaireController extends Controller
 
         if ($request->has('date_fin_service') && !empty($request->date_fin_service)) {
             $dateFin = $request->date_fin_service;
-            \Log::info('📅 Filtrage par date fin service:', $dateFin);
+            Log::info('📅 Filtrage par date fin service:', $dateFin);
 
             // Get fonctionnaire IDs that have service end date <= dateFin
             $matchingFonctionnaireIds = $this->getFonctionnairesWithServiceDateRange(null, $dateFin);
-            \Log::info('📅 Fonctionnaires trouvés avec date fin:', ['count' => count($matchingFonctionnaireIds)]);
+            Log::info('📅 Fonctionnaires trouvés avec date fin:', ['count' => count($matchingFonctionnaireIds)]);
 
             $filterResults[] = $matchingFonctionnaireIds;
             $hasAnyFilter = true;
@@ -795,7 +795,7 @@ class FonctionnaireController extends Controller
 
         // Apply intersection of all filter results
         if (!empty($filterResults)) {
-            \Log::info('🔄 Applying filter intersection:', ['filter_count' => count($filterResults), 'has_any_filter' => $hasAnyFilter]);
+            Log::info('🔄 Applying filter intersection:', ['filter_count' => count($filterResults), 'has_any_filter' => $hasAnyFilter]);
 
             // Start with the first filter result
             $finalIds = $filterResults[0];
@@ -803,23 +803,23 @@ class FonctionnaireController extends Controller
             // Intersect with all other filter results
             for ($i = 1; $i < count($filterResults); $i++) {
                 $finalIds = array_intersect($finalIds, $filterResults[$i]);
-                \Log::info('🔄 After intersection ' . $i . ':', ['count' => count($finalIds)]);
+                Log::info('🔄 After intersection ' . $i . ':', ['count' => count($finalIds)]);
             }
 
-            \Log::info('🎯 Final filtered IDs:', ['count' => count($finalIds), 'ids' => array_slice($finalIds, 0, 10)]);
+            Log::info('🎯 Final filtered IDs:', ['count' => count($finalIds), 'ids' => array_slice($finalIds, 0, 10)]);
 
             if (!empty($finalIds)) {
                 $query->whereIn('id', $finalIds);
             } else {
                 // No matching fonctionnaires after intersection - return empty result
-                \Log::info('⚠️ No fonctionnaires match all selected filters');
+                Log::info('⚠️ No fonctionnaires match all selected filters');
                 $query->whereRaw('1 = 0'); // More explicit than where('id', -1)
             }
         } else {
             if ($hasAnyFilter) {
-                \Log::info('ℹ️ Only direct relationship filters will be applied');
+                Log::info('ℹ️ Only direct relationship filters will be applied');
             } else {
-                \Log::info('ℹ️ No filters applied - showing all fonctionnaires');
+                Log::info('ℹ️ No filters applied - showing all fonctionnaires');
             }
         }
 
@@ -833,7 +833,7 @@ class FonctionnaireController extends Controller
             });
             $countAfter = $query->count();
             $hasAnyFilter = true;
-            \Log::info('📋 Catégories Cadre filtrées:', [
+            Log::info('📋 Catégories Cadre filtrées:', [
                 'categories' => $categorieIds,
                 'before' => $countBefore,
                 'after' => $countAfter
@@ -849,7 +849,7 @@ class FonctionnaireController extends Controller
             });
             $countAfter = $query->count();
             $hasAnyFilter = true;
-            \Log::info('🏛️ Cadres filtrés:', [
+            Log::info('🏛️ Cadres filtrés:', [
                 'cadres' => $cadreIds,
                 'before' => $countBefore,
                 'after' => $countAfter
@@ -865,7 +865,7 @@ class FonctionnaireController extends Controller
             });
             $countAfter = $query->count();
             $hasAnyFilter = true;
-            \Log::info('🎓 Spécialité Grades filtrés:', [
+            Log::info('🎓 Spécialité Grades filtrés:', [
                 'grades' => $gradeIds,
                 'before' => $countBefore,
                 'after' => $countAfter
@@ -874,7 +874,7 @@ class FonctionnaireController extends Controller
 
         // Count after all filters
         $totalAfter = $query->count();
-        \Log::info('📊 Total fonctionnaires après filtrage:', ['count' => $totalAfter]);
+    Log::info('📊 Total fonctionnaires après filtrage:', ['count' => $totalAfter]);
 
         return DataTables::of($query)
             ->addColumn('nom_prenom', function ($data) {
@@ -899,7 +899,7 @@ class FonctionnaireController extends Controller
     public function dataCustom(Request $request)
     {
         // 🚀 Début du filtrage personnalisé
-        \Log::info('🔍 FILTRE PERSONNALISÉ DÉMARRÉ', $request->all());
+    Log::info('🔍 FILTRE PERSONNALISÉ DÉMARRÉ', $request->all());
 
         $query = Fonctionnaire::with([
             'nomFormationSanitaire:id,nom,nom_arabe,niveau_categorie_formation_id',
@@ -921,13 +921,13 @@ class FonctionnaireController extends Controller
                   ->orWhere('ppr', 'LIKE', "%{$searchTerm}%")
                   ->orWhere('cin', 'LIKE', "%{$searchTerm}%");
             });
-            \Log::info('🔍 Recherche appliquée:', ['term' => $searchTerm]);
+            Log::info('🔍 Recherche appliquée:', ['term' => $searchTerm]);
         }
 
         // 🎯 Filtres spécifiques
         if ($request->has('filters') && !empty($request->filters)) {
             $filters = json_decode($request->filters, true);
-            \Log::info('🎯 Filtres reçus:', $filters);
+            Log::info('🎯 Filtres reçus:', $filters);
 
             foreach ($filters as $field => $value) {
                 switch ($field) {
@@ -956,7 +956,7 @@ class FonctionnaireController extends Controller
                         });
                         break;
                 }
-                \Log::info("✅ Filtre appliqué: {$field} = {$value}");
+                Log::info("✅ Filtre appliqué: {$field} = {$value}");
             }
         }
 
@@ -2431,39 +2431,6 @@ class FonctionnaireController extends Controller
         return view('fonctionnaire.show', compact('fonctionnaire', 'congeDocuments', 'congeStatistics', 'congeTotals'));
     }
 
-    // Debug helper: return congé computed arrays for a fonctionnaire (only in local env)
-    public function debugCongeData($id)
-    {
-        if (!app()->environment('local')) {
-            abort(404);
-        }
-
-        $fonctionnaire = \App\Models\Fonctionnaire::with(['relicats.typeConge'])->findOrFail($id);
-
-        $congeDocuments = $this->getFonctionnaireCongeDocuments($fonctionnaire);
-        $congeStatistics = $this->getFonctionnaireCongeStatistics($fonctionnaire);
-
-        // Recompute congeTotals like show() expects
-        $congeTotals = [];
-        foreach ($congeStatistics['by_type'] ?? [] as $typeName => $typeData) {
-            $congeTotals[$typeName] = [
-                'standard_allocation' => $typeData['standard_allocation'] ?? 0,
-                'available_days' => $typeData['standard_allocation'] ?? 0,
-                'jours_pris_total' => $typeData['pris_total'] ?? 0,
-                'jours_restants' => $typeData['restant'] ?? 0,
-                'pourcentage_utilise' => isset($typeData['standard_allocation']) && $typeData['standard_allocation'] > 0
-                    ? round((($typeData['pris_total'] ?? 0) / $typeData['standard_allocation']) * 100, 1)
-                    : 0
-            ];
-        }
-
-        return response()->json([
-            'congeDocuments' => $congeDocuments,
-            'congeStatistics' => $congeStatistics,
-            'congeTotals' => $congeTotals,
-        ]);
-    }
-
     /**
      * Get all congé documents for a specific fonctionnaire (similar to global search)
      */
@@ -2530,37 +2497,33 @@ class FonctionnaireController extends Controller
             'summary' => []
         ];
 
+        // Use the same data as the list to ensure consistency
         $congeDocuments = $this->getFonctionnaireCongeDocuments($fonctionnaire);
-        $allTypes = \App\Models\TypeConge::all();
 
-        // Collect years from decisions and relicats
+        // Get all years from the documents
         $years = collect();
         foreach ($congeDocuments as $conge) {
-            if (!empty($conge['date_debut'])) {
-                try { $years->push(\Carbon\Carbon::parse($conge['date_debut'])->year); } catch (\Exception $e) {}
-            }
-            if (isset($conge['source']) && $conge['source'] === 'relicat' && isset($conge['relicat']->date_conge)) {
-                try { $years->push(\Carbon\Carbon::parse($conge['relicat']->date_conge)->year); } catch (\Exception $e) {}
+            if ($conge['date_debut']) {
+                $year = \Carbon\Carbon::parse($conge['date_debut'])->year;
+                $years->push($year);
             }
         }
-        $years->push(date('Y'));
         $years = $years->unique()->sort()->values();
 
-        // Helper: sum relicats up to year for fonctionnaire and type
-        $sumRelicatUpTo = function($typeId, $year) use ($fonctionnaire) {
-            // Sum relicats that explicitly set 'annee' <= year OR whose date_conge year <= year or null
-            return \App\Models\Relicat::where('fonctionnaire_id', $fonctionnaire->id)
-                ->where('type_conge_id', $typeId)
-                ->where(function($q) use ($year) {
-                    $q->whereNotNull('annee')->where('annee', '<=', $year)
-                      ->orWhere(function($q2) use ($year) {
-                          $q2->whereNull('annee')->whereRaw('YEAR(date_conge) <= ?', [$year]);
-                      });
-                })
-                ->sum('nbr_jours_disponibles');
-        };
+        // Get all types with their standard allocations
+        $allTypes = \App\Models\TypeConge::all();
+        $typeAllocations = [];
+        foreach ($allTypes as $type) {
+            // If the type is 'administratif' (or contains that word), enforce 22 days standard
+            $lowerName = strtolower($type->nom ?? '');
+            if (str_contains($lowerName, 'administratif')) {
+                $typeAllocations[$type->nom] = 22;
+            } else {
+                $typeAllocations[$type->nom] = $type->jours ?? 0;
+            }
+        }
 
-        // Build stats per year
+        // Calculate statistics by year
         foreach ($years as $year) {
             $yearStats = [
                 'year' => $year,
@@ -2569,65 +2532,114 @@ class FonctionnaireController extends Controller
                 'by_type' => []
             ];
 
-            foreach ($allTypes as $type) {
-                $standard = $type->jours ?? 0;
-                $relicatsUpTo = $sumRelicatUpTo($type->id, $year);
-                $available = $relicatsUpTo > 0 ? $relicatsUpTo : $standard;
-
-                $yearStats['by_type'][$type->nom] = [
-                    'standard' => $standard,
-                    'available' => $available,
+            // Initialize with standard allocations for each type
+            foreach ($typeAllocations as $typeName => $standardDays) {
+                // Start with standard allocation
+                $yearStats['by_type'][$typeName] = [
+                    'standard' => $standardDays,
                     'pris' => 0,
-                    'solde' => $available
+                    'solde' => $standardDays,
+                    'additifs' => 0
                 ];
 
-                $yearStats['reliquats_disponibles'] += $available;
+                // Include additifs that apply to this year (Option B: additif applies only to its specified year)
+                $typeModel = $allTypes->firstWhere('nom', $typeName);
+                $typeId = $typeModel ? $typeModel->id : null;
+                $additifsSum = 0;
+                if ($typeId) {
+                    $additifsSum = \App\Models\Relicat::where('fonctionnaire_id', $fonctionnaire->id)
+                        ->where('type_conge_id', $typeId)
+                        ->where('is_additif', 1)
+                        ->where('annee', $year)
+                        ->sum('nbr_jours_disponibles');
+                }
+
+                // total available for this type in this year = standard allocation + additifs for that year
+                $yearStats['by_type'][$typeName]['additifs'] = $additifsSum;
+                $yearStats['by_type'][$typeName]['solde'] = $standardDays + $additifsSum;
+                $yearStats['reliquats_disponibles'] += ($standardDays + $additifsSum);
             }
 
-            // subtract days taken this year
+            // Calculate days taken for this year
             foreach ($congeDocuments as $conge) {
-                if (!empty($conge['date_debut']) && \Carbon\Carbon::parse($conge['date_debut'])->year == $year && $conge['source'] == 'decision') {
+                if ($conge['date_debut'] && \Carbon\Carbon::parse($conge['date_debut'])->year == $year) {
                     $typeNom = $conge['type_conge'];
-                    $yearStats['jours_pris'] += $conge['nombre_jours'];
-                    if (isset($yearStats['by_type'][$typeNom])) {
-                        $yearStats['by_type'][$typeNom]['pris'] += $conge['nombre_jours'];
-                        $yearStats['by_type'][$typeNom]['solde'] = $yearStats['by_type'][$typeNom]['available'] - $yearStats['by_type'][$typeNom]['pris'];
+
+                    // Only count decisions (actual leave taken), not relicats
+                    if ($conge['source'] == 'decision') {
+                        $yearStats['jours_pris'] += $conge['nombre_jours'];
+
+                        if (isset($yearStats['by_type'][$typeNom])) {
+                            $yearStats['by_type'][$typeNom]['pris'] += $conge['nombre_jours'];
+                            // solde = standard + additifs - pris
+                            $yearStats['by_type'][$typeNom]['solde'] =
+                                $yearStats['by_type'][$typeNom]['standard'] + $yearStats['by_type'][$typeNom]['additifs'] - $yearStats['by_type'][$typeNom]['pris'];
+                        }
                     }
                 }
             }
 
+            // Update total available days (standard + additifs - taken)
+            $yearStats['reliquats_disponibles'] = $yearStats['reliquats_disponibles'] - $yearStats['jours_pris'];
+
             $statistics['by_year'][$year] = $yearStats;
         }
 
-        // By type overall
+    // Calculate overall statistics by type using standard allocations + additifs for the current year (Option B)
         $typeStats = [];
-        foreach ($allTypes as $type) {
-            $reliquatsTotal = \App\Models\Relicat::where('fonctionnaire_id', $fonctionnaire->id)
-                ->where('type_conge_id', $type->id)->sum('nbr_jours_disponibles');
-            $joursPrisTotal = \App\Models\CongeDecision::where('fonctionnaire_id', $fonctionnaire->id)
-                ->where('type_conge_id', $type->id)->sum('nombre_jours');
 
-            $standard = $type->jours ?? 0;
-            $available = $reliquatsTotal > 0 ? $reliquatsTotal : $standard;
+        // Initialize with all types and their standard allocations
+        foreach ($allTypes as $type) {
+
+            // Sum additifs that apply to the current year only (Option B)
+            $currentYear = date('Y');
+            $additifsSum = \App\Models\Relicat::where('fonctionnaire_id', $fonctionnaire->id)
+                ->where('type_conge_id', $type->id)
+                ->where('is_additif', 1)
+                ->where('annee', $currentYear)
+                ->sum('nbr_jours_disponibles');
+
+            $totalAvailable = ($type->jours ?? 0) + $additifsSum;
 
             $typeStats[$type->nom] = [
-                'standard_allocation' => $standard,
-                'reliquats_total' => $reliquatsTotal,
-                'pris_total' => $joursPrisTotal,
-                'restant' => $available - $joursPrisTotal,
-                'available_days' => $available
+                'standard_allocation' => $type->jours ?? 0,
+                'additifs' => $additifsSum,
+                'reliquats_total' => $totalAvailable, // standard + additifs
+                'pris_total' => 0,
+                'restant' => $totalAvailable
             ];
+        }
+
+        // Calculate total days taken by type across all years
+        foreach ($congeDocuments as $conge) {
+            $typeNom = $conge['type_conge'];
+
+            // Only count decisions (actual leave taken)
+            if ($conge['source'] == 'decision' && isset($typeStats[$typeNom])) {
+                $typeStats[$typeNom]['pris_total'] += $conge['nombre_jours'];
+            }
+        }
+
+        // Calculate remaining days for each type
+        foreach ($typeStats as $typeName => $typeData) {
+            $typeStats[$typeName]['restant'] = $typeData['reliquats_total'] - $typeData['pris_total'];
         }
 
         $statistics['by_type'] = $typeStats;
 
-        $totalAvailable = array_sum(array_column($typeStats, 'available_days'));
-        $totalPris = array_sum(array_column($typeStats, 'pris_total'));
+        // Summary using standard allocations + additifs
+        $totalAvailableAllocation = 0;
+        $totalPris = 0;
+        foreach ($typeStats as $typeData) {
+            // 'standard_allocation' already includes additifs (cumulative standard), so don't add additifs again
+            $totalAvailableAllocation += ($typeData['standard_allocation'] ?? 0);
+            $totalPris += $typeData['pris_total'];
+        }
 
         $statistics['summary'] = [
-            'total_reliquats' => $totalAvailable,
+            'total_reliquats' => $totalAvailableAllocation,
             'total_pris' => $totalPris,
-            'total_restant' => $totalAvailable - $totalPris
+            'total_restant' => $totalAvailableAllocation - $totalPris
         ];
 
         return $statistics;
@@ -2643,32 +2655,87 @@ class FonctionnaireController extends Controller
         // Get all congé types with their predefined soldes
         $allTypes = \App\Models\TypeConge::all();
 
+    // Normalize fonctionnaire sexe to decide whether to hide gender-specific types
+    $sexeChar = isset($fonctionnaire->sexe) ? strtoupper(substr($fonctionnaire->sexe, 0, 1)) : null;
+    $isFemale = $sexeChar === 'F';
+    $isMale = $sexeChar === 'M';
+
         foreach ($allTypes as $type) {
-            // Calculate reliquats total (what the employee has been allocated)
+            // If fonctionnaire is female, skip paternity-type entries (name contains 'patern')
+            $typeNomLower = strtolower($type->nom ?? '');
+            // Skip paternity for females, skip maternity for males (name-based heuristic)
+            if ($isFemale && stripos($typeNomLower, 'patern') !== false) {
+                continue;
+            }
+            if ($isMale && stripos($typeNomLower, 'matern') !== false) {
+                continue;
+            }
+            // Calculate reliquats total (what the employee has been allocated) including additifs
             $reliquatsTotal = \App\Models\Relicat::where('fonctionnaire_id', $fonctionnaire->id)
                 ->where('type_conge_id', $type->id)
                 ->sum('nbr_jours_disponibles');
+
+
+            // Sum additifs that apply to the current year only (Option B)
+            $currentYear = date('Y');
+            $additifsSum = \App\Models\Relicat::where('fonctionnaire_id', $fonctionnaire->id)
+                ->where('type_conge_id', $type->id)
+                ->where('is_additif', 1)
+                ->where('annee', $currentYear)
+                ->sum('nbr_jours_disponibles');
+
+            // If there are no explicit reliquats, consider standard + additifs as available
+            if ($reliquatsTotal <= 0 && $additifsSum > 0) {
+                $reliquatsTotal = ($type->jours ?? 0) + $additifsSum;
+            }
 
             // Calculate jours pris total (what the employee has used)
             $joursPrisTotal = \App\Models\CongeDecision::where('fonctionnaire_id', $fonctionnaire->id)
                 ->where('type_conge_id', $type->id)
                 ->sum('nombre_jours');
 
-            // Use the jours from type_conges table as the standard allocation
-            $standardDays = $type->jours ?? 0; // Get jours from the type_conges table
+            // Use the jours from type_conges table as the standard allocation, but enforce 22 for administratif
+            $lowerTypeName = strtolower($type->nom ?? '');
+            $standardDays = str_contains($lowerTypeName, 'administratif') ? 22 : ($type->jours ?? 0);
 
-            // If no reliquats allocated yet, use the standard days as available
-            $availableDays = $reliquatsTotal > 0 ? $reliquatsTotal : $standardDays;
+            // Cumulative standard shown to user = standard allocation + additifs for the current year
+            $cumulativeStandard = $standardDays + $additifsSum;
 
-            $totals[$type->nom] = [
-                'type_id' => $type->id,
-                'standard_allocation' => $standardDays, // From type_conges.solde
-                'reliquats_total' => $reliquatsTotal, // What's been allocated to this employee
-                'jours_pris_total' => $joursPrisTotal, // What's been used
-                'jours_restants' => $availableDays - $joursPrisTotal, // What's left
-                'available_days' => $availableDays, // Available for this employee
-                'pourcentage_utilise' => $availableDays > 0 ? round(($joursPrisTotal / $availableDays) * 100, 1) : 0
-            ];
+            // For administratif: standard = 22 + additifs, disponible = standard - pris, restants = disponible
+            if (str_contains($lowerTypeName, 'administratif')) {
+                // Additifs cumulés: tous les additifs antérieurs et de l'année courante
+                $additifsCumul = \App\Models\Relicat::where('fonctionnaire_id', $fonctionnaire->id)
+                    ->where('type_conge_id', $type->id)
+                    ->where('is_additif', 1)
+                    ->where('annee', '<=', date('Y'))
+                    ->sum('nbr_jours_disponibles');
+                $standardAdmin = 22 + $additifsCumul;
+                $disponibleAdmin = $standardAdmin - $joursPrisTotal;
+                $totals[$type->nom] = [
+                    'type_id' => $type->id,
+                    'standard_allocation' => $standardAdmin,
+                    'reliquats_total' => $standardAdmin,
+                    'additifs' => $additifsCumul,
+                    'jours_pris_total' => $joursPrisTotal,
+                    'jours_restants' => $disponibleAdmin,
+                    'available_days' => $disponibleAdmin,
+                    'pourcentage_utilise' => $standardAdmin > 0 ? round(($joursPrisTotal / $standardAdmin) * 100, 1) : 0
+                ];
+            } else {
+                // For other types, keep previous logic (prefer relicatsTotal if present)
+                $allocatedAmount = $reliquatsTotal > 0 ? $reliquatsTotal : $cumulativeStandard;
+                $joursRestants = $allocatedAmount - $joursPrisTotal;
+                $totals[$type->nom] = [
+                    'type_id' => $type->id,
+                    'standard_allocation' => $cumulativeStandard,
+                    'reliquats_total' => $allocatedAmount,
+                    'additifs' => $additifsSum,
+                    'jours_pris_total' => $joursPrisTotal,
+                    'jours_restants' => $joursRestants,
+                    'available_days' => $joursRestants,
+                    'pourcentage_utilise' => $allocatedAmount > 0 ? round(($joursPrisTotal / $allocatedAmount) * 100, 1) : 0
+                ];
+            }
         }
 
         return $totals;
@@ -2679,25 +2746,52 @@ class FonctionnaireController extends Controller
      */
     public function showCongeDecision($id)
     {
-        $congeDecision = \App\Models\CongeDecision::with(['fonctionnaire', 'typeConge'])
-            ->findOrFail($id);
+        // First try to find a CongeDecision with this id
+        $congeDecision = \App\Models\CongeDecision::with(['fonctionnaire', 'typeConge'])->find($id);
 
-        return response()->json([
-            'success' => true,
-            'decision' => [
-                'id' => $congeDecision->id,
-                'fonctionnaire' => $congeDecision->fonctionnaire->nom . ' ' . $congeDecision->fonctionnaire->prenom,
-                'ppr' => $congeDecision->fonctionnaire->ppr,
-                'type_conge' => $congeDecision->typeConge ? $congeDecision->typeConge->nom : 'Non défini',
-                'nombre_jours' => $congeDecision->nombre_jours,
-                'date_debut' => $congeDecision->date_debut ? \Carbon\Carbon::parse($congeDecision->date_debut)->format('d/m/Y') : null,
-                'date_fin' => $congeDecision->date_fin ? \Carbon\Carbon::parse($congeDecision->date_fin)->format('d/m/Y') : null,
-                'statut' => ucfirst($congeDecision->statut ?? 'En attente'),
-                'remarques' => $congeDecision->remarques,
-                'created_at' => $congeDecision->created_at->format('d/m/Y H:i'),
-                'updated_at' => $congeDecision->updated_at->format('d/m/Y H:i')
-            ]
-        ]);
+        if ($congeDecision) {
+            return response()->json([
+                'success' => true,
+                'decision' => [
+                    'id' => $congeDecision->id,
+                    'fonctionnaire' => $congeDecision->fonctionnaire->nom . ' ' . $congeDecision->fonctionnaire->prenom,
+                    'ppr' => $congeDecision->fonctionnaire->ppr,
+                    'type_conge' => $congeDecision->typeConge ? $congeDecision->typeConge->nom : 'Non défini',
+                    'nombre_jours' => $congeDecision->nombre_jours,
+                    'date_debut' => $congeDecision->date_debut ? \Carbon\Carbon::parse($congeDecision->date_debut)->format('d/m/Y') : null,
+                    'date_fin' => $congeDecision->date_fin ? \Carbon\Carbon::parse($congeDecision->date_fin)->format('d/m/Y') : null,
+                    'statut' => ucfirst($congeDecision->statut ?? 'En attente'),
+                    'remarques' => $congeDecision->remarques,
+                    'created_at' => $congeDecision->created_at->format('d/m/Y H:i'),
+                    'updated_at' => $congeDecision->updated_at->format('d/m/Y H:i')
+                ]
+            ]);
+        }
+
+        // If not found, try a Relicat (ancien format de congé)
+        $relicat = \App\Models\Relicat::with(['fonctionnaire', 'typeConge'])->find($id);
+
+        if ($relicat) {
+            return response()->json([
+                'success' => true,
+                'decision' => [
+                    'id' => $relicat->id,
+                    'fonctionnaire' => $relicat->fonctionnaire->nom . ' ' . $relicat->fonctionnaire->prenom,
+                    'ppr' => $relicat->fonctionnaire->ppr ?? null,
+                    'type_conge' => $relicat->typeConge ? $relicat->typeConge->nom : 'Non défini',
+                    'nombre_jours' => $relicat->nbr_jours_disponibles,
+                    'date_debut' => $relicat->date_conge ? \Carbon\Carbon::parse($relicat->date_conge)->format('d/m/Y') : null,
+                    'date_fin' => null,
+                    'statut' => 'Disponible',
+                    'remarques' => null,
+                    'created_at' => $relicat->created_at ? $relicat->created_at->format('d/m/Y H:i') : null,
+                    'updated_at' => $relicat->updated_at ? $relicat->updated_at->format('d/m/Y H:i') : null
+                ]
+            ]);
+        }
+
+        // Not found in either table
+        return response()->json(['success' => false, 'message' => 'Décision ou reliquat introuvable'], 404);
     }
 
     /**

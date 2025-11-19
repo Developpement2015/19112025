@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test avec Fonctionnaire Réel - PPR 1660747</title>
+    <style>
+        body {
+            font-family: Arial;
+            margin: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: -30px -30px 30px -30px;
+        }
+        .info-box {
+            background: #d1ecf1;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 6px solid #0dcaf0;
+            border-radius: 5px;
+        }
+        .test-box {
+            background: #fff3cd;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 6px solid #ffc107;
+            border-radius: 5px;
+        }
+        .success-box {
+            background: #d4edda;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 6px solid #28a745;
+            border-radius: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: white;
+        }
+        table td {
+            padding: 15px;
+            border-bottom: 2px solid #dee2e6;
+        }
+        table td:first-child {
+            font-weight: bold;
+            width: 35%;
+            color: #495057;
+            background: #f8f9fa;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #e83e8c;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        button {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 18px 35px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            width: 100%;
+            margin: 15px 0;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.4);
+        }
+        .steps {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .steps ol {
+            line-height: 2.2;
+            font-size: 16px;
+        }
+        .steps ol li {
+            margin: 10px 0;
+        }
+        .warning {
+            background: #f8d7da;
+            padding: 15px;
+            border-left: 5px solid #dc3545;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✅ Test Fonctionnaire Réel - PPR 1660747</h1>
+
+        <div class="success-box">
+            <h2>🎯 Correction Appliquée</h2>
+            <p><strong>Problème résolu :</strong> Le système cherche maintenant par PPR en premier, puis vérifie toutes les informations dans l'ordre logique :</p>
+            <ol>
+                <li>Vérification du PPR dans la base fonctionnaires</li>
+                <li>Vérification de la date de naissance</li>
+                <li>Vérification de la date de recrutement</li>
+                <li>Vérification de l'existence d'une demande avec ce PPR</li>
+                <li>Vérification que l'email correspond à la demande</li>
+            </ol>
+        </div>
+
+        <div class="test-box">
+            <h2>📋 Données du Fonctionnaire Réel</h2>
+            <p><strong>Ces données existent dans votre base de données :</strong></p>
+            <table>
+                <tr>
+                    <td>PPR (Matricule) :</td>
+                    <td><code>1660747</code></td>
+                </tr>
+                <tr>
+                    <td>Nom :</td>
+                    <td><code>KADDOURI</code></td>
+                </tr>
+                <tr>
+                    <td>CIN :</td>
+                    <td><code>CD231259</code></td>
+                </tr>
+                <tr>
+                    <td>Date de naissance :</td>
+                    <td><code>1989-02-19</code> (19/02/1989)</td>
+                </tr>
+                <tr>
+                    <td>Date de recrutement :</td>
+                    <td><code>2011-12-31</code> (31/12/2011)</td>
+                </tr>
+                <tr>
+                    <td>Email de la demande :</td>
+                    <td><code>Developpement2015@gmail.com</code></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="info-box">
+            <h3>💡 Important</h3>
+            <p>Ce fonctionnaire a déjà créé une demande dans le système avec l'email <code>Developpement2015@gmail.com</code></p>
+            <p>Vous devez utiliser cet email exact pour la récupération du mot de passe.</p>
+        </div>
+
+        <div class="steps">
+            <h3>🧪 Instructions de Test</h3>
+            <ol>
+                <li><strong>Cliquez sur le bouton vert ci-dessous</strong></li>
+                <li><strong>Remplissez le formulaire avec ces données :</strong>
+                    <ul>
+                        <li>Email : <code>Developpement2015@gmail.com</code></li>
+                        <li>PPR : <code>1660747</code></li>
+                        <li>Date de naissance : <code>1989-02-19</code></li>
+                        <li>Date de recrutement : <code>2011-12-31</code></li>
+                    </ul>
+                </li>
+                <li><strong>Cliquez sur "Envoyer le lien"</strong></li>
+                <li>Un lien de réinitialisation apparaîtra ✅</li>
+                <li>Cliquez sur "Ouvrir le lien maintenant"</li>
+                <li>Créez un nouveau mot de passe</li>
+                <li>Testez la connexion avec le nouveau mot de passe</li>
+            </ol>
+        </div>
+
+        <div class="warning">
+            <h4>⚠️ Messages d'Erreur Possibles</h4>
+            <ul>
+                <li><strong>"Le PPR fourni n'existe pas"</strong> → Vérifiez que vous avez bien saisi <code>1660747</code></li>
+                <li><strong>"La date de naissance ne correspond pas"</strong> → Utilisez <code>1989-02-19</code></li>
+                <li><strong>"La date de recrutement ne correspond pas"</strong> → Utilisez <code>2011-12-31</code></li>
+                <li><strong>"Aucune demande trouvée"</strong> → Ce fonctionnaire n'a pas encore créé de demande</li>
+                <li><strong>"L'email ne correspond pas"</strong> → Utilisez <code>Developpement2015@gmail.com</code></li>
+            </ul>
+        </div>
+
+        <div style="margin-top: 40px; text-align: center;">
+            <button onclick="window.location.href='http://192.168.1.38:8806/demandes/forgot-password'">
+                🚀 Tester Maintenant avec PPR 1660747
+            </button>
+        </div>
+
+        <div class="info-box" style="margin-top: 30px;">
+            <h3>🔄 Alternative - Compte de Test</h3>
+            <p>Si vous voulez tester avec un compte plus simple :</p>
+            <table>
+                <tr>
+                    <td>Email :</td>
+                    <td><code>testfonc@example.com</code></td>
+                </tr>
+                <tr>
+                    <td>PPR :</td>
+                    <td><code>2176357</code></td>
+                </tr>
+                <tr>
+                    <td>Date naissance :</td>
+                    <td><code>1995-07-23</code></td>
+                </tr>
+                <tr>
+                    <td>Date recrutement :</td>
+                    <td><code>2022-06-02</code></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="success-box" style="margin-top: 30px;">
+            <h3>✅ Améliorations Apportées</h3>
+            <ul>
+                <li>✓ Le système vérifie maintenant le PPR en premier</li>
+                <li>✓ Messages d'erreur plus précis et informatifs</li>
+                <li>✓ Ordre de vérification logique (PPR → Dates → Demande → Email)</li>
+                <li>✓ Meilleure expérience utilisateur</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

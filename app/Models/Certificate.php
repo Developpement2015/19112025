@@ -30,6 +30,15 @@ class Certificate extends Model
         return $this->belongsTo(TypeCertificate::class, 'type_certificate_id');
     }
 
+    /**
+     * Alias for compatibility with camelCase relation name used in some places.
+     * Keeps backwards compatibility with code that uses $certificate->typeCertificate
+     */
+    public function typeCertificate(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->type_certificate();
+    }
+
     public function fonctionnaire(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Fonctionnaire::class, 'fonctionnaire_id');

@@ -15,12 +15,11 @@ class Relicat extends Model
         'type_conge_id',
         'nbr_jours_disponibles',
         'date_conge',
-        'annee',
+        'date_depot',
         'is_additif',
+        'annee',
         'document'
     ];
-    
-
 
     public function fonctionnaire(): BelongsTo
     {

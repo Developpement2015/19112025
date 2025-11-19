@@ -82,6 +82,15 @@
                                         <button class="btn btn-login" type="submit">Se Connecter</button>
                                     </div>
 
+                                    <div class="form-login mt-3">
+                                        <a href="{{ url('/demandes/create') }}" class="btn btn-success w-100" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); border: none; padding: 12px; font-weight: bold;">
+                                            <i class="fas fa-user-tie"></i> Accès Fonctionnaire
+                                        </a>
+                                        <small class="d-block text-center mt-2 text-muted">
+                                            <i class="fas fa-info-circle"></i> Créer ou consulter vos demandes (congés, attestations)
+                                        </small>
+                                    </div>
+
                                 </div>
                             </form>
 

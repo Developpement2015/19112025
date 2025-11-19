@@ -72,47 +72,46 @@
 
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="form-label" for="date_conge">Date de prise de congé</label>
-                                        <input type="date" name="date_conge" id="date_conge" class="form-control" value="{{ date('Y-m-d') }}">
+                                        <label class="form-label" for="date_depot">Date de dépôt / solde</label>
+                                        <input type="date" name="date_depot" id="date_depot" class="form-control" value="{{ date('Y-m-d') }}">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-12" id="nbr_jours_disponibles_container">
                                     <div class="mb-3">
-                                        <label class="form-label" for="jours_pris">Nombre de jours pris</label>
-                                        <input type="number" id="jours_pris" placeholder="Nombre de jours pris"
-                                            class="form-control" min="1" value="1">
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label" for="nbr_jours_disponibles">Nombre jours disponibles</label>
+                                        <label class="form-label" for="nbr_jours_disponibles" id="nbr_label">Nombre solde crédit (jours)</label>
                                         <input type="number" name="nbr_jours_disponibles" id="nbr_jours_disponibles"
-                                            placeholder="Nombre de jours disponibles" class="form-control">
+                                            placeholder="Nombre de jours" class="form-control" min="0" value="0" required>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="row">
+                            <div class="row mt-2">
                                 <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label class="form-label" for="annee">Année du reliquat</label>
-                                        <input type="number" name="annee" id="annee" class="form-control" value="{{ date('Y') }}">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="1" id="is_additif"
+                                            name="is_additif">
+                                        <label class="form-check-label" for="is_additif">
+                                            Congé additif (ajoute au cumul)
+                                        </label>
                                     </div>
                                 </div>
-                                <div class="col-md-4 d-flex align-items-center">
-                                    <div class="form-check mt-3">
-                                        <input class="form-check-input" type="checkbox" name="is_additif" value="1" id="is_additif">
-                                        <label class="form-check-label" for="is_additif">Conge additif</label>
-                                    </div>
-                                </div>
+
+                                <div class="col-md-4">
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label class="form-label" for="document">Note / Fichier (optionnel)</label>
-                                        <input type="file" name="document" id="document" class="form-control" accept=".pdf,.jpg,.png,.doc,.docx">
+                                        <label class="form-label" for="annee">Année (optionnelle)</label>
+                                        <input type="number" name="annee" id="annee" class="form-control" placeholder="YYYY" min="2000" max="2100">
+                                    </div>
+                                </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="document">Document justificatif (pdf, max 5MB)</label>
+                                        <input type="file" name="document" id="document" class="form-control" accept="application/pdf,image/*">
                                     </div>
                                 </div>
                             </div>
@@ -132,82 +131,92 @@
                             <script>
                                 document.addEventListener('DOMContentLoaded', function() {
                                     const typeCongeSelect = document.getElementById('type_conge_id');
-                                    const joursPrisInput = document.getElementById('jours_pris');
                                     const joursDisponiblesInput = document.getElementById('nbr_jours_disponibles');
-                                    const dateCongeInput = document.getElementById('date_conge');
+                                    const joursDisponiblesContainer = document.getElementById('nbr_jours_disponibles_container');
+                                    const nbrLabel = document.getElementById('nbr_label');
+                                    const dateDepotInput = document.getElementById('date_depot');
                                     const leaveInfoBox = document.getElementById('leave-info');
                                     const congeTypeName = document.getElementById('conge-type-name');
                                     const congeJoursTotal = document.getElementById('conge-jours-total');
                                     const congeJoursPris = document.getElementById('conge-jours-pris');
                                     const congeJoursRestants = document.getElementById('conge-jours-restants');
+                                    const isAdditifCheckbox = document.getElementById('is_additif');
 
                                     // Get existing relicats for this fonctionnaire
                                     const fonctionnaireRelicats = @json($fonctionnaire->relicats);
+
+                                    function toggleInputsForAdditif() {
+                                        const isAdditif = isAdditifCheckbox.checked;
+                                        if (isAdditif) {
+                                            // Label and placeholder adapt for additif (solde crédit)
+                                            nbrLabel.textContent = 'Nombre solde crédit (jours)';
+                                            joursDisponiblesInput.placeholder = 'Nombre de jours crédités';
+                                            if (!joursDisponiblesInput.value) joursDisponiblesInput.value = 1;
+                                        } else {
+                                            // Treat the same single field as 'jours pris' when not additif
+                                            nbrLabel.textContent = 'Nombre de jours pris';
+                                            joursDisponiblesInput.placeholder = 'Nombre de jours pris';
+                                            if (!joursDisponiblesInput.value) joursDisponiblesInput.value = '';
+                                        }
+                                    }
 
                                     function calculateRemainingDays() {
                                         if (!typeCongeSelect.value) return;
 
                                         const selectedOption = typeCongeSelect.options[typeCongeSelect.selectedIndex];
                                         const typeCongeId = parseInt(typeCongeSelect.value);
-                                        const joursTotalParAn = parseInt(selectedOption.dataset.jours);
-                                        const joursPris = parseInt(joursPrisInput.value) || 0;
+                                        const joursTotalParAn = parseInt(selectedOption.dataset.jours) || 0;
+                                        const isAdditif = isAdditifCheckbox.checked;
 
-                                        // Get the selected date and extract the year
-                                        const selectedDate = new Date(dateCongeInput.value);
+                                        // Use date_depot as the date source; fallback to today if empty
+                                        const sourceDateStr = (dateDepotInput && dateDepotInput.value) ? dateDepotInput.value : '';
+                                        const selectedDate = sourceDateStr ? new Date(sourceDateStr) : new Date();
                                         const selectedYear = selectedDate.getFullYear();
-                                        const currentYear = new Date().getFullYear();
 
-                                        // If the selected year is different from the current year,
-                                        // we need to recalculate the remaining days
-                                        let joursRestants;
-
-                                        if (selectedYear === currentYear) {
-                                            // Use the pre-calculated remaining days from the option
-                                            joursRestants = parseInt(selectedOption.dataset.joursRestants) - joursPris;
-                                        } else {
-                                            // For future years, start with the full allocation
-                                            // For past years, we need to calculate based on that year's usage
-
-                                            // Find existing relicats for this type of leave in the selected year
-                                            let joursDejaUtilises = 0;
-                                            fonctionnaireRelicats.forEach(relicat => {
-                                                // Check if the relicat is for the same type of leave
-                                                if (parseInt(relicat.type_conge_id) === typeCongeId) {
-                                                    // Check if the relicat is from the selected year
-                                                    const relicatDate = relicat.date_conge ? new Date(relicat.date_conge) : null;
-                                                    const relicatYear = relicatDate ? relicatDate.getFullYear() : null;
-
-                                                    // Only count relicats from the selected year
-                                                    if (!relicatDate || relicatYear === selectedYear) {
-                                                        joursDejaUtilises += parseInt(relicat.nbr_jours_disponibles);
+                                        // Compute sum of existing additifs and prises for the selected year and type
+                                        let sumAdditifsExistants = 0;
+                                        let sumPrisExistants = 0;
+                                        fonctionnaireRelicats.forEach(relicat => {
+                                            if (parseInt(relicat.type_conge_id) === typeCongeId) {
+                                                const relicatDateValue = relicat.date_depot || relicat.date_conge || null;
+                                                const relicatDate = relicatDateValue ? new Date(relicatDateValue) : null;
+                                                const relicatYear = relicatDate ? relicatDate.getFullYear() : null;
+                                                if (!relicatDate || relicatYear === selectedYear) {
+                                                    if (relicat.is_additif) {
+                                                        sumAdditifsExistants += parseInt(relicat.nbr_jours_disponibles) || 0;
+                                                    } else {
+                                                        sumPrisExistants += parseInt(relicat.nbr_jours_disponibles) || 0;
                                                     }
                                                 }
-                                            });
+                                            }
+                                        });
 
-                                            // Calculate remaining days for the selected year
-                                            joursRestants = joursTotalParAn - joursDejaUtilises - joursPris;
+                                        const currentValue = parseInt(joursDisponiblesInput.value) || 0;
+
+                                        // For display: remaining before adding current action
+                                        const remainingBefore = joursTotalParAn + sumAdditifsExistants - sumPrisExistants;
+                                        // Remaining after applying current action
+                                        let remainingAfter;
+                                        if (isAdditif) {
+                                            remainingAfter = remainingBefore + currentValue;
+                                        } else {
+                                            remainingAfter = remainingBefore - currentValue;
                                         }
 
-                                        // Update the form - automatically set the number of days available to the days taken
-                                        joursDisponiblesInput.value = joursPris;
+                                        // nbr_jours_disponibles already holds the proper value (used for both additif and prise)
+                                        // ensure it's at least 0
+                                        if (!joursDisponiblesInput.value) joursDisponiblesInput.value = 0;
 
-                                        // Update the select option text to show the correct remaining days for the selected year
-                                        if (selectedYear !== currentYear) {
-                                            // For a different year, update the option text
-                                            const originalText = selectedOption.textContent.split('(')[0].trim();
-                                            selectedOption.textContent = `${originalText} (${joursRestants + joursPris} jours restants)`;
-                                        }
-
-                                        // Update info box
+                                        // Update info box: show totals and remaining before/after
                                         congeTypeName.textContent = selectedOption.textContent;
                                         congeJoursTotal.textContent = joursTotalParAn;
-                                        congeJoursPris.textContent = joursDejaUtilises;
-                                        congeJoursRestants.textContent = joursRestants;
+                                        congeJoursPris.textContent = sumPrisExistants + ' (déjà)';
+                                        congeJoursRestants.textContent = remainingBefore + ' -> ' + remainingAfter;
                                         leaveInfoBox.style.display = 'block';
 
-                                        // Disable the form submission if there are not enough days remaining
+                                        // Disable the form submission if there are not enough days remaining and it's not an additif
                                         const submitButton = document.querySelector('.btn-submit');
-                                        if (joursRestants < 0) {
+                                        if (remainingWithoutAdditif < 0 && !isAdditif) {
                                             submitButton.disabled = true;
                                             submitButton.title = 'Pas assez de jours disponibles';
                                             leaveInfoBox.classList.add('bg-danger', 'text-white');
@@ -220,10 +229,18 @@
                                         }
                                     }
 
+                                    // Initialize UI state
+                                    toggleInputsForAdditif();
+                                    calculateRemainingDays();
+
                                     // Add event listeners
                                     typeCongeSelect.addEventListener('change', calculateRemainingDays);
-                                    joursPrisInput.addEventListener('input', calculateRemainingDays);
-                                    dateCongeInput.addEventListener('change', calculateRemainingDays);
+                                    joursDisponiblesInput.addEventListener('input', calculateRemainingDays);
+                                    dateDepotInput.addEventListener('change', calculateRemainingDays);
+                                    isAdditifCheckbox.addEventListener('change', function() {
+                                        toggleInputsForAdditif();
+                                        calculateRemainingDays();
+                                    });
                                 });
                             </script>
                         </form>

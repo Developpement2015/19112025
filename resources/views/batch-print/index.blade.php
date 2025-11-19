@@ -35,6 +35,12 @@
                                 <i class="fas fa-exclamation-triangle me-2"></i>Liste des grèves
                             </button>
                         </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="certificates-list-tab" data-bs-toggle="tab"
+                                data-bs-target="#certificates-list" type="button" role="tab">
+                                <i class="fas fa-file-medical-alt me-2"></i>Listes des certificats
+                            </button>
+                        </li>
                     </ul>
 
                     <div class="tab-content" id="batchPrintTabsContent">
@@ -192,6 +198,161 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Certificates List Tab -->
+                        <div class="tab-pane fade" id="certificates-list" role="tabpanel">
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <h5 class="card-title">Listes des certificats</h5>
+                                            <div>
+                                                <form id="certificatesExportExcelForm" method="GET" action="{{ route('batch-print.export-certificates-excel') }}" target="_blank" class="d-inline">
+                                                    <input type="hidden" name="date_debut" id="certificatesExportDateDebut">
+                                                    <input type="hidden" name="date_fin" id="certificatesExportDateFin">
+                                                    <button type="button" id="certificatesExportExcelBtn" class="btn btn-success btn-sm me-2"><i class="fas fa-file-excel me-1"></i> Export Excel</button>
+                                                </form>
+                                                <form id="certificatesExportPdfForm" method="GET" action="{{ route('batch-print.export-certificates-pdf') }}" target="_blank" class="d-inline">
+                                                    <input type="hidden" name="date_debut" id="certificatesExportPdfDateDebut">
+                                                    <input type="hidden" name="date_fin" id="certificatesExportPdfDateFin">
+                                                    <button type="button" id="certificatesExportPdfBtn" class="btn btn-secondary btn-sm"><i class="fas fa-file-pdf me-1"></i> Export PDF</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <form id="certificatesSearchForm" onsubmit="return false;">
+                                                <div class="row mb-3">
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">Date début</label>
+                                                        <input type="date" id="certificatesDateDebut" class="form-control" required>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">Date fin</label>
+                                                        <input type="date" id="certificatesDateFin" class="form-control" required>
+                                                    </div>
+                                                    <div class="col-md-4 d-flex align-items-end">
+                                                        <button type="button" id="searchCertificatesBtn" class="btn btn-primary me-2">Rechercher</button>
+                                                        <button type="button" id="resetCertificatesBtn" class="btn btn-outline-secondary">Réinitialiser</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+
+                                            <div id="certificatesResultsArea" style="display:none;">
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>PPR</th>
+                                                                <th>Nom</th>
+                                                                <th>Prénom</th>
+                                                                <th>Type de certificat</th>
+                                                                <th>Date Dépôt</th>
+                                                                <th>Date Début</th>
+                                                                <th>Nombre Jours</th>
+                                                                <th>Fichier</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="certificatesResultsTbody"></tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div id="certificatesNoResults" class="alert alert-info" style="display:none;">Aucun certificat trouvé pour la plage sélectionnée.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const searchBtn = document.getElementById('searchCertificatesBtn');
+                            const resetBtn = document.getElementById('resetCertificatesBtn');
+                            const dateDebut = document.getElementById('certificatesDateDebut');
+                            const dateFin = document.getElementById('certificatesDateFin');
+                            const resultsArea = document.getElementById('certificatesResultsArea');
+                            const noResults = document.getElementById('certificatesNoResults');
+                            const tbody = document.getElementById('certificatesResultsTbody');
+                            const exportExcelDateDebut = document.getElementById('certificatesExportDateDebut');
+                            const exportExcelDateFin = document.getElementById('certificatesExportDateFin');
+                            const exportPdfDateDebut = document.getElementById('certificatesExportPdfDateDebut');
+                            const exportPdfDateFin = document.getElementById('certificatesExportPdfDateFin');
+                            const exportExcelBtn = document.getElementById('certificatesExportExcelBtn');
+                            const exportPdfBtn = document.getElementById('certificatesExportPdfBtn');
+
+                            function renderCertificates(data) {
+                                tbody.innerHTML = '';
+                                if (!data || data.length === 0) {
+                                    resultsArea.style.display = 'none';
+                                    noResults.style.display = 'block';
+                                    return;
+                                }
+
+                                noResults.style.display = 'none';
+                                resultsArea.style.display = 'block';
+
+                                data.forEach(c => {
+                                    const tr = document.createElement('tr');
+                                    tr.innerHTML = `
+                                        <td>${c.ppr}</td>
+                                        <td>${c.nom}</td>
+                                        <td>${c.prenom}</td>
+                                        <td>${c.type}</td>
+                                        <td>${c.date_depot}</td>
+                                        <td>${c.date_debut}</td>
+                                        <td>${c.jours}</td>
+                                        <td>${c.url ? `<a href="${c.url}" target="_blank" class="btn btn-sm btn-info">Télécharger</a>` : '<span class="badge bg-secondary">Aucun fichier</span>'}</td>
+                                    `;
+                                    tbody.appendChild(tr);
+                                });
+                            }
+
+                            searchBtn.addEventListener('click', function() {
+                                if (!dateDebut.value || !dateFin.value) {
+                                    alert('Veuillez sélectionner une plage de dates.');
+                                    return;
+                                }
+
+                                fetch(`{{ url('/impression-lot/certificates') }}?date_debut=${dateDebut.value}&date_fin=${dateFin.value}`, {
+                                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                                })
+                                .then(async r => {
+                                    const text = await r.text();
+                                    try {
+                                        const json = JSON.parse(text);
+                                        if (json.success) {
+                                            renderCertificates(json.data);
+                                        } else {
+                                            alert(json.message || 'Erreur lors de la récupération des certificats');
+                                        }
+                                    } catch (e) {
+                                        console.error('Response not JSON', text);
+                                        alert('Erreur serveur: voir console pour détails');
+                                    }
+                                }).catch(err => { console.error(err); alert('Erreur réseau'); });
+                            });
+
+                            resetBtn.addEventListener('click', function() {
+                                dateDebut.value = '';
+                                dateFin.value = '';
+                                tbody.innerHTML = '';
+                                resultsArea.style.display = 'none';
+                                noResults.style.display = 'none';
+                            });
+
+                            exportExcelBtn.addEventListener('click', function() {
+                                if (!dateDebut.value || !dateFin.value) { alert('Sélectionnez une plage de dates'); return; }
+                                exportExcelDateDebut.value = dateDebut.value;
+                                exportExcelDateFin.value = dateFin.value;
+                                // submit the form
+                                document.getElementById('certificatesExportExcelForm').submit();
+                            });
+
+                            exportPdfBtn.addEventListener('click', function() {
+                                if (!dateDebut.value || !dateFin.value) { alert('Sélectionnez une plage de dates'); return; }
+                                exportPdfDateDebut.value = dateDebut.value;
+                                exportPdfDateFin.value = dateFin.value;
+                                document.getElementById('certificatesExportPdfForm').submit();
+                            });
+                        });
+                        </script>
                         <!-- Congé Decisions Tab -->
                         <div class="tab-pane fade" id="conge-decisions" role="tabpanel">
                             <div class="row mt-4">
@@ -226,11 +387,16 @@
                                                         <input type="date" name="date_debut" class="form-control">
                                                     </div>
                                                     <div class="col-md-3">
+                                                        <label class="form-label">PPR</label>
+                                                        <input type="text" name="ppr" class="form-control" placeholder="Rechercher par PPR...">
+                                                    </div>
+                                                    <div class="col-md-3">
                                                         <label class="form-label">Date fin</label>
                                                         <input type="date" name="date_fin" class="form-control">
                                                     </div>
                                                     <div class="col-md-3">
                                                         <label class="form-label">&nbsp;</label>
+                                                        <input type="hidden" name="include_relicats" value="1">
                                                         <button type="submit" class="btn btn-success d-block">
                                                             <i class="fas fa-file-excel me-2"></i>Exporter Excel
                                                         </button>

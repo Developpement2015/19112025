@@ -601,6 +601,105 @@
 </div>
 <!-- ajouter - modal-->
 
+<style>
+    /* Highlight style applied to inputs when add modal opens */
+    .add-highlight {
+        background-color: #fff8e1 !important; /* light yellow */
+        box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.15) !important; /* subtle amber glow */
+        border-color: #ffca28 !important;
+        transition: background-color 220ms ease, box-shadow 220ms ease;
+    }
+</style>
+<style>
+    /* Choices.js dropdown wrapper highlight (the visible select replacement) */
+    .choices.add-highlight .choices__inner {
+        background-color: #fff8e1 !important;
+        box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.12) !important;
+        border-color: #ffca28 !important;
+    }
+</style>
+
+<style>
+    /* Stronger focus style when a field is focused */
+    .focus-highlight {
+        background-color: #fff3cd !important; /* slightly stronger yellow */
+        box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.25) !important;
+        border-color: #ffb300 !important;
+        outline: none !important;
+    }
+
+    .choices.focus-highlight .choices__inner {
+        background-color: #fff3cd !important;
+        box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.2) !important;
+        border-color: #ffb300 !important;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var addModalEl = document.getElementById('add');
+        if (!addModalEl) return;
+
+        function addHighlightToSelectWrapper(selectEl) {
+            var wrapper = null;
+            if (selectEl.nextElementSibling && selectEl.nextElementSibling.classList.contains('choices')) {
+                wrapper = selectEl.nextElementSibling;
+            } else {
+                wrapper = selectEl.parentElement ? selectEl.parentElement.querySelector('.choices') : null;
+            }
+            if (wrapper) wrapper.classList.add('add-highlight');
+        }
+
+        function removeHighlightFromSelectWrapper(selectEl) {
+            var wrapper = null;
+            if (selectEl.nextElementSibling && selectEl.nextElementSibling.classList.contains('choices')) {
+                wrapper = selectEl.nextElementSibling;
+            } else {
+                wrapper = selectEl.parentElement ? selectEl.parentElement.querySelector('.choices') : null;
+            }
+            if (wrapper) wrapper.classList.remove('add-highlight');
+        }
+
+        addModalEl.addEventListener('show.bs.modal', function (event) {
+            var inputs = addModalEl.querySelectorAll('input, select, textarea');
+            inputs.forEach(function (el) {
+                el.classList.add('add-highlight');
+                if (el.classList && el.classList.contains('choices-select')) {
+                    addHighlightToSelectWrapper(el);
+                }
+            });
+
+            // Add focus/blur handlers to show stronger focus highlight
+            inputs.forEach(function (el) {
+                el.addEventListener('focus', function onFocus() {
+                    el.classList.add('focus-highlight');
+                    if (el.classList && el.classList.contains('choices-select')) {
+                        var wrapper = el.nextElementSibling && el.nextElementSibling.classList.contains('choices') ? el.nextElementSibling : (el.parentElement ? el.parentElement.querySelector('.choices') : null);
+                        if (wrapper) wrapper.classList.add('focus-highlight');
+                    }
+                });
+                el.addEventListener('blur', function onBlur() {
+                    el.classList.remove('focus-highlight');
+                    if (el.classList && el.classList.contains('choices-select')) {
+                        var wrapper = el.nextElementSibling && el.nextElementSibling.classList.contains('choices') ? el.nextElementSibling : (el.parentElement ? el.parentElement.querySelector('.choices') : null);
+                        if (wrapper) wrapper.classList.remove('focus-highlight');
+                    }
+                });
+            });
+        });
+
+        addModalEl.addEventListener('hide.bs.modal', function (event) {
+            var inputs = addModalEl.querySelectorAll('input, select, textarea');
+            inputs.forEach(function (el) {
+                el.classList.remove('add-highlight');
+                if (el.classList && el.classList.contains('choices-select')) {
+                    removeHighlightFromSelectWrapper(el);
+                }
+            });
+        });
+    });
+</script>
+
 
 
 <!-- filter - modal-->

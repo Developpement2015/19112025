@@ -8,23 +8,29 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * @return void
      */
     public function up(): void
     {
         Schema::table('relicats', function (Blueprint $table) {
-            $table->integer('annee')->nullable()->after('date_conge')->comment('Année du reliquat/additif');
-            $table->boolean('is_additif')->default(false)->after('annee');
-            $table->string('document')->nullable()->after('is_additif');
+            if (!Schema::hasColumn('relicats', 'date_depot')) {
+                $table->date('date_depot')->nullable()->after('date_conge');
+            }
         });
     }
 
     /**
      * Reverse the migrations.
+     *
+     * @return void
      */
     public function down(): void
     {
         Schema::table('relicats', function (Blueprint $table) {
-            $table->dropColumn(['annee', 'is_additif', 'document']);
+            if (Schema::hasColumn('relicats', 'date_depot')) {
+                $table->dropColumn('date_depot');
+            }
         });
     }
 };

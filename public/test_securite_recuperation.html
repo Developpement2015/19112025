@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Sécurité - Récupération Mot de Passe</title>
+    <style>
+        body {
+            font-family: Arial;
+            margin: 40px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .security-feature {
+            background: #d1f2eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 5px solid #28a745;
+            border-radius: 5px;
+        }
+        .test-box {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 2px solid #dee2e6;
+        }
+        .danger-box {
+            background: #f8d7da;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 5px solid #dc3545;
+            border-radius: 5px;
+        }
+        .success-box {
+            background: #d4edda;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 5px solid #28a745;
+            border-radius: 5px;
+        }
+        button {
+            background: #28a745;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+        .btn-danger {
+            background: #dc3545;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #e83e8c;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        table td {
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔒 Système de Sécurité - Récupération Mot de Passe</h1>
+
+        <div class="success-box">
+            <h3><span class="icon">✅</span>Système Sécurisé Activé</h3>
+            <p>Le lien de réinitialisation n'est plus accessible sans vérification d'identité complète.</p>
+        </div>
+
+        <h2>🛡️ Mesures de Sécurité Implémentées</h2>
+
+        <div class="security-feature">
+            <h4>1. Vérification Double (Email + CIN)</h4>
+            <p>Le système exige maintenant deux informations :</p>
+            <ul>
+                <li><strong>Email du fonctionnaire</strong></li>
+                <li><strong>CIN (Carte d'Identité Nationale)</strong></li>
+            </ul>
+            <p>Les deux doivent correspondre pour obtenir le lien de réinitialisation.</p>
+        </div>
+
+        <div class="security-feature">
+            <h4>2. Limite de Tentatives</h4>
+            <p><strong>Maximum 3 tentatives en 15 minutes</strong></p>
+            <p>Après 3 tentatives échouées, le système bloque l'email pendant 15 minutes.</p>
+            <p>Cela empêche les attaques par force brute.</p>
+        </div>
+
+        <div class="security-feature">
+            <h4>3. Token Unique et Temporaire</h4>
+            <ul>
+                <li>Chaque lien contient un token aléatoire de 60 caractères</li>
+                <li>Le token expire après 60 minutes</li>
+                <li>Un seul usage possible par token</li>
+            </ul>
+        </div>
+
+        <div class="security-feature">
+            <h4>4. Enregistrement des Tentatives</h4>
+            <p>Toutes les tentatives (réussies et échouées) sont enregistrées dans la base de données.</p>
+        </div>
+
+        <h2>🧪 Tests de Sécurité</h2>
+
+        <div class="test-box">
+            <h4>✅ Test 1 : Tentative Réussie (Données Correctes)</h4>
+            <table>
+                <tr>
+                    <td width="30%"><strong>Email :</strong></td>
+                    <td><code>test@example.com</code></td>
+                </tr>
+                <tr>
+                    <td><strong>CIN :</strong></td>
+                    <td><code>AB12345</code></td>
+                </tr>
+            </table>
+            <p><strong>Résultat attendu :</strong> <span style="color: green;">✓ Lien généré et affiché</span></p>
+            <button onclick="window.location.href='http://192.168.1.38:8806/demandes/forgot-password'">
+                Tester avec données correctes
+            </button>
+        </div>
+
+        <div class="test-box">
+            <h4>❌ Test 2 : Email Correct, CIN Incorrect</h4>
+            <table>
+                <tr>
+                    <td width="30%"><strong>Email :</strong></td>
+                    <td><code>test@example.com</code></td>
+                </tr>
+                <tr>
+                    <td><strong>CIN :</strong></td>
+                    <td><code>MAUVAIS123</code> ❌</td>
+                </tr>
+            </table>
+            <p><strong>Résultat attendu :</strong> <span style="color: red;">✗ Erreur - Informations incorrectes</span></p>
+        </div>
+
+        <div class="test-box">
+            <h4>❌ Test 3 : Email Incorrect</h4>
+            <table>
+                <tr>
+                    <td width="30%"><strong>Email :</strong></td>
+                    <td><code>faux@example.com</code> ❌</td>
+                </tr>
+                <tr>
+                    <td><strong>CIN :</strong></td>
+                    <td><code>AB12345</code></td>
+                </tr>
+            </table>
+            <p><strong>Résultat attendu :</strong> <span style="color: red;">✗ Erreur - Aucun compte trouvé</span></p>
+        </div>
+
+        <div class="test-box">
+            <h4>⏱️ Test 4 : Trop de Tentatives</h4>
+            <p>Après 3 tentatives échouées en moins de 15 minutes :</p>
+            <p><strong>Résultat attendu :</strong> <span style="color: orange;">⏳ Blocage temporaire (15 minutes)</span></p>
+        </div>
+
+        <h2>🎯 Scénarios d'Attaque Prévenus</h2>
+
+        <div class="danger-box">
+            <h4>❌ Scénario 1 : Attaquant connaît seulement l'email</h4>
+            <p><strong>Action :</strong> Tentative de récupération avec email correct mais CIN aléatoire</p>
+            <p><strong>Blocage :</strong> Le système refuse (email + CIN doivent correspondre)</p>
+        </div>
+
+        <div class="danger-box">
+            <h4>❌ Scénario 2 : Force Brute</h4>
+            <p><strong>Action :</strong> Essayer plusieurs CIN avec le même email</p>
+            <p><strong>Blocage :</strong> Après 3 tentatives → Blocage 15 minutes</p>
+        </div>
+
+        <div class="danger-box">
+            <h4>❌ Scénario 3 : Interception du lien</h4>
+            <p><strong>Action :</strong> Quelqu'un intercepte le lien</p>
+            <p><strong>Blocage :</strong> Le lien expire après 60 minutes + utilisable une seule fois</p>
+        </div>
+
+        <h2>📊 Comparaison Avant/Après</h2>
+
+        <table style="border: 1px solid #dee2e6;">
+            <thead style="background: #f8f9fa;">
+                <tr>
+                    <th style="padding: 10px; text-align: left;">Critère</th>
+                    <th style="padding: 10px; text-align: center;">Avant</th>
+                    <th style="padding: 10px; text-align: center;">Après</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Vérification identité</td>
+                    <td style="text-align: center; color: red;">❌ Email seul</td>
+                    <td style="text-align: center; color: green;">✅ Email + CIN</td>
+                </tr>
+                <tr>
+                    <td>Limite tentatives</td>
+                    <td style="text-align: center; color: red;">❌ Aucune</td>
+                    <td style="text-align: center; color: green;">✅ 3 / 15 min</td>
+                </tr>
+                <tr>
+                    <td>Protection force brute</td>
+                    <td style="text-align: center; color: red;">❌ Non</td>
+                    <td style="text-align: center; color: green;">✅ Oui</td>
+                </tr>
+                <tr>
+                    <td>Enregistrement tentatives</td>
+                    <td style="text-align: center; color: red;">❌ Non</td>
+                    <td style="text-align: center; color: green;">✅ Oui</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="margin-top: 30px; padding: 20px; background: #e7f3ff; border-radius: 8px; text-align: center;">
+            <h3>🚀 Testez le Système Sécurisé</h3>
+            <button onclick="window.location.href='http://192.168.1.38:8806/demandes/forgot-password'">
+                🔒 Accéder à la récupération sécurisée
+            </button>
+            <button onclick="window.location.href='http://192.168.1.38:8806/guide_recuperation_motpasse.html'" style="background: #0dcaf0;">
+                📖 Guide complet
+            </button>
+        </div>
+    </div>
+</body>
+</html>

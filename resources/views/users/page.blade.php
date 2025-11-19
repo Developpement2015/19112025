@@ -133,6 +133,7 @@
                                     <th>Nom</th>
                                     <th>Email</th>
                                     <th>Rôles</th>
+                                    <th>Niveau Demandes</th>
                                     <th>Date de création</th>
                                     <th class="no-sort">Actions</th>
                                 </tr>
@@ -231,6 +232,19 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Niveau d'Approbation Demandes</label>
+                                <select name="demande_approval_level" class="form-control">
+                                    <option value="">-- Aucun niveau --</option>
+                                    <option value="1">Niveau 1 (Première approbation)</option>
+                                    <option value="2">Niveau 2 (Deuxième approbation)</option>
+                                    <option value="3">Niveau 3 (Troisième approbation)</option>
+                                    <option value="4">Niveau 4 (Approbation finale + Décision)</option>
+                                </select>
+                                <small class="text-muted">Assignez un niveau pour que l'utilisateur puisse approuver les demandes</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -284,6 +298,19 @@
                                         <option value="{{ $role->name }}">{{ $role->name }}</option>
                                     @endforeach
                                 </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Niveau d'Approbation Demandes</label>
+                                <select name="demande_approval_level" id="editUserDemandeLevel" class="form-control">
+                                    <option value="">-- Aucun niveau --</option>
+                                    <option value="1">Niveau 1 (Première approbation)</option>
+                                    <option value="2">Niveau 2 (Deuxième approbation)</option>
+                                    <option value="3">Niveau 3 (Troisième approbation)</option>
+                                    <option value="4">Niveau 4 (Approbation finale + Décision)</option>
+                                </select>
+                                <small class="text-muted">Assignez un niveau pour que l'utilisateur puisse approuver les demandes</small>
                             </div>
                         </div>
                     </div>
@@ -496,6 +523,7 @@ document.addEventListener('DOMContentLoaded', function() {
             { data: 'name', name: 'name' },
             { data: 'email', name: 'email' },
             { data: 'roles', name: 'roles', orderable: false, searchable: false },
+            { data: 'demande_level', name: 'demande_level', orderable: false, searchable: false, title: 'Niveau Demandes' },
             { data: 'created_at', name: 'created_at' },
             { data: 'actions', name: 'actions', orderable: false, searchable: false }
         ],
@@ -717,6 +745,9 @@ function editUser(id) {
             user.roles.forEach(function(role) {
                 $('#editUserRoles option[value="' + role.name + '"]').prop('selected', true);
             });
+
+            // Set demande approval level
+            $('#editUserDemandeLevel').val(user.demande_approval_level || '');
 
             $('#editUserModal').modal('show');
         },

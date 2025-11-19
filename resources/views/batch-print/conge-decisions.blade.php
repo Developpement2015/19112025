@@ -54,6 +54,12 @@
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label">&nbsp;</label>
+                                <div class="mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="1" id="includeRelicat" name="include_relicats" checked>
+                                        <label class="form-check-label" for="includeRelicat">Inclure relicats</label>
+                                    </div>
+                                </div>
                                 <div class="d-grid gap-2">
                                     <button type="submit" class="btn btn-success">
                                         <i class="fas fa-file-excel me-2"></i>Exporter Excel

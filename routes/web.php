@@ -397,6 +397,28 @@ Route::get('/test-fonctionnaires-page', function() {
     return $controller->page();
 });
 
+// Demandes routes (public create, restricted admin index)
+use App\Http\Controllers\DemandeController;
+Route::get('/demandes/create', [DemandeController::class, 'create'])->name('demandes.create');
+Route::post('/demandes/store', [DemandeController::class, 'store'])->name('demandes.store');
+Route::get('/demandes/mine', [DemandeController::class, 'mine'])->name('demandes.mine');
+Route::post('/demandes/mine', [DemandeController::class, 'mine'])->name('demandes.mine.check');
+
+// Password reset routes for fonctionnaires
+Route::get('/demandes/forgot-password', [DemandeController::class, 'showForgotPassword'])->name('demandes.forgot-password');
+Route::post('/demandes/send-reset-link', [DemandeController::class, 'sendResetLink'])->name('demandes.send-reset-link');
+Route::get('/demandes/reset-password', [DemandeController::class, 'showResetPassword'])->name('demandes.show-reset-password');
+Route::post('/demandes/reset-password', [DemandeController::class, 'resetPassword'])->name('demandes.reset-password');
+
+Route::get('/demandes', [DemandeController::class, 'index'])->name('demandes.index')->middleware('auth');
+Route::get('/demandes/{demande}', [DemandeController::class, 'show'])->name('demandes.show')->middleware('auth');
+Route::get('/demandes/{demande}/edit', [DemandeController::class, 'edit'])->name('demandes.edit')->middleware(['auth', 'permission:demandes.manage']);
+Route::put('/demandes/{demande}', [DemandeController::class, 'update'])->name('demandes.update')->middleware(['auth', 'permission:demandes.manage']);
+Route::delete('/demandes/{demande}', [DemandeController::class, 'destroy'])->name('demandes.destroy')->middleware(['auth', 'permission:demandes.manage']);
+Route::post('/demandes/{demande}/approve', [DemandeController::class, 'approve'])->name('demandes.approve')->middleware('auth');
+Route::get('/demandes/{demande}/decide', [DemandeController::class, 'decide'])->name('demandes.decide')->middleware('auth');
+Route::post('/demandes/{demande}/store-decision', [DemandeController::class, 'storeDecision'])->name('demandes.store-decision')->middleware('auth');
+
 // Test data endpoint without auth (can be removed after testing)
 Route::get('/test-fonctionnaires-data', function() {
     $controller = new \App\Http\Controllers\FonctionnaireController();
@@ -591,11 +613,6 @@ Route::delete('historique-position/delete/{id}', [HistoriquePositionController::
 Route::post('reliquat/add', [RelicatController::class, 'add'])->name('reliquat.add')->middleware('auth');
 Route::delete('reliquat-position/delete/{id}', [RelicatController::class, 'delete'])->name('reliquat.delete')->middleware('auth');
 
-// Debug route: only available in local environment
-if (app()->environment('local')) {
-    Route::get('debug/fonctionnaire-conges/{id}', [App\Http\Controllers\FonctionnaireController::class, 'debugCongeData']);
-}
-
 //Batch Print - Impression en lot
 Route::get('/impression-lot', [BatchPrintController::class, 'index'])->name('batch-print.index')->middleware(['auth', 'permission:batch-print.view']);
 Route::post('/impression-lot/attestations', [BatchPrintController::class, 'batchAttestations'])->name('batch-print.attestations')->middleware(['auth', 'permission:batch-print.attestations']);
@@ -608,6 +625,11 @@ Route::put('/impression-lot/update-ampliations/{id}', [BatchPrintController::cla
 Route::post('/impression-lot/print-decisions-with-individual-ampliations', [BatchPrintController::class, 'printDecisionsWithIndividualAmpliations'])->name('batch-print.print-decisions-with-individual-ampliations')->middleware(['auth', 'permission:batch-print.conge-decisions']);
 Route::post('/impression-lot/print-decisions', [BatchPrintController::class, 'printDecisions'])->name('batch-print.print-decisions')->middleware(['auth', 'permission:batch-print.conge-decisions']);
 Route::delete('/impression-lot/delete-decision/{id}', [BatchPrintController::class, 'deleteDecision'])->name('batch-print.delete-decision')->middleware(['auth', 'permission:batch-print.conge-decisions']);
+
+// Certificates listing & export (Listes des certificats)
+Route::get('/impression-lot/certificates', [BatchPrintController::class, 'certificatesList'])->name('batch-print.certificates')->middleware(['auth', 'permission:batch-print.view']);
+Route::get('/impression-lot/export-certificates-excel', [BatchPrintController::class, 'exportCertificatesExcel'])->name('batch-print.export-certificates-excel')->middleware(['auth', 'permission:batch-print.view']);
+Route::get('/impression-lot/export-certificates-pdf', [BatchPrintController::class, 'exportCertificatesPdf'])->name('batch-print.export-certificates-pdf')->middleware(['auth', 'permission:batch-print.view']);
 
 //Certificate
 Route::post('certificate/add', [CertificateController::class, 'add'])->name('certificate.add')->middleware('auth');
